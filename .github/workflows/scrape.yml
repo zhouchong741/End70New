@@ -1,0 +1,63 @@
+name: 3-Hourly Scrape and Deploy
+
+on:
+  schedule:
+    # 每3小时运行一次
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # 允许手动触发
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Scraper
+        run: |
+          python scrape_endclothing.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data.js endclothing_70off.json
+          # 只有当有变化时才提交
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update data [skip ci]" && git push)
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Notify DingTalk
+        if: success()
+        run: curl 'https://oapi.dingtalk.com/robot/send?access_token=5945ce9476563718586b7134fbe53ff8e501c6d1425c71c67b5a365d27f7995b' -H 'Content-Type: application/json' -d '{"msgtype": "markdown", "markdown": {"title": "End70 自动更新成功", "text": "### End70 数据已更新 🚀\n\n爬虫任务完成，页面已部署。\n\n[点击访问](${{ steps.deployment.outputs.page_url }})" }}'
