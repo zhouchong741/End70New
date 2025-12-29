@@ -60,4 +60,13 @@ jobs:
 
       - name: Notify DingTalk
         if: success()
-        run: curl 'https://oapi.dingtalk.com/robot/send?access_token=5945ce9476563718586b7134fbe53ff8e501c6d1425c71c67b5a365d27f7995b' -H 'Content-Type: application/json' -d '{"msgtype": "markdown", "markdown": {"title": "End70 自动更新成功", "text": "### End70 数据已更新 🚀\n\n爬虫任务完成，页面已部署。\n\n[点击访问](${{ steps.deployment.outputs.page_url }})" }}'
+        run: |
+          curl 'https://oapi.dingtalk.com/robot/send?access_token=5945ce9476563718586b7134fbe53ff8e501c6d1425c71c67b5a365d27f7995b' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "msgtype": "markdown",
+              "markdown": {
+                "title": "End70 自动更新成功",
+                "text": "### End70 数据已更新 🚀\n\n爬虫任务完成，页面已部署。\n\n[点击访问](${{ steps.deployment.outputs.page_url }})"
+              }
+            }'
