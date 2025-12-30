@@ -5,7 +5,7 @@ import json
 import time
 import math
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -40,7 +40,9 @@ def save_data(products_dict):
     
     # Save as JS for HTML view with update time
     json_str = json.dumps(products_list, ensure_ascii=False)
-    update_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+    # 获取北京时间 (UTC+8)
+    beijing_tz = timezone(timedelta(hours=8))
+    update_time = datetime.now(beijing_tz).strftime('%Y-%m-%d %H:%M')   
     with open(DATA_JS_FILE, 'w', encoding='utf-8') as f:
         f.write(f"window.products = {json_str};\n")
         f.write(f'window.updateTime = "{update_time}";')

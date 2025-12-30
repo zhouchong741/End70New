@@ -115,6 +115,54 @@
             font-size: 12px;
             display: inline-block;
         }
+
+        /* 回到顶部按钮样式 */
+        #back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            border: none;
+            outline: none;
+        }
+
+        #back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #back-to-top:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        #back-to-top:active {
+            transform: scale(0.95);
+        }
+
+        #back-to-top svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
     </style>
 </head>
 
@@ -151,6 +199,13 @@
             <p>Data auto-updates every 6 hours</p>
         </footer>
     </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="回到顶部">
+        <svg viewBox="0 0 24 24">
+            <path d="M18 15l-6-6-6 6" />
+        </svg>
+    </button>
 
     <!-- Load Data -->
     <script src="data.js"></script>
@@ -203,6 +258,23 @@
                     p.name.toLowerCase().includes(term)
                 );
                 renderProducts(filtered);
+            });
+
+            // 回到顶部逻辑
+            const backToTopBtn = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > window.innerHeight) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
         } else {
             grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">No data found. Please run the scraper first.</p>';
