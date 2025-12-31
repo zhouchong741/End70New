@@ -169,11 +169,12 @@ def extract_products(soup):
                 elif img_tag.get('data-src'):
                     img_url = img_tag.get('data-src')
             
-            match = re.search(r'(.*)(CN¥[\d,]+)(CN¥[\d,]+)(70% off)$', content)
+            match = re.search(r'(.*)(CN¥[\d,]+)(CN¥[\d,]+)((?:70%|65%|60%) off)$', content)
             if match:
                 name = match.group(1).strip()
                 original_price_str = match.group(2)
                 sale_price_str = match.group(3)
+                discount_str = match.group(4)
                 
                 original_price = int(re.sub(r'[^\d]', '', original_price_str))
                 discounted_price = int(re.sub(r'[^\d]', '', sale_price_str))
@@ -182,7 +183,7 @@ def extract_products(soup):
                     "name": name,
                     "original_price": original_price,
                     "discounted_price": discounted_price,
-                    "discount": "70% off",
+                    "discount": discount_str,
                     "url": full_url,
                     "image_url": img_url
                 })
@@ -190,11 +191,16 @@ def extract_products(soup):
                 # Fallback for cases where the regex doesn't match
                 name_match = re.search(r'(.*)(CN¥)', content)
                 name = name_match.group(1).strip() if name_match else content
+                # Try to find which discount it is from the text node
+                discount_val = "70% off"
+                if "65% off" in text_node: discount_val = "65% off"
+                elif "60% off" in text_node: discount_val = "60% off"
+                
                 products.append({
                     "name": name,
                     "raw_content": content,
                     "url": full_url,
-                    "discount": "70% off",
+                    "discount": discount_val,
                     "image_url": img_url
                 })
     return products

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>End Clothing 70% Off Products</title>
+    <title>End Clothing Sale Products</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -163,6 +163,28 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+
+        /* Tab 样式 */
+        .tab-btn {
+            background: #e5e5e5;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #ef4444;
+            color: white;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 
@@ -173,7 +195,7 @@
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4">
                 <div>
                     <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">End Clothing Sale</h1>
-                    <p class="text-gray-500 text-xs sm:text-sm mt-1">70% Off Collection</p>
+                    <p class="text-gray-500 text-xs sm:text-sm mt-1">Discount Collection</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
                     <span class="text-xs sm:text-sm text-gray-500" id="item-count">Loading...</span>
@@ -183,8 +205,20 @@
             </div>
         </header>
 
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+            <button class="tab-btn active px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                data-discount="70% off">70% Off</button>
+            <button class="tab-btn px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                data-discount="65% off">65% Off</button>
+            <button class="tab-btn px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                data-discount="60% off">60% Off</button>
+            <button class="tab-btn px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                data-discount="all">全部</button>
+        </div>
+
         <!-- 更新时间 -->
-        <div class="mb-4 sm:mb-6">
+        <div class="mb-4 sm:mb-6 flex justify-between items-center">
             <span class="update-time" id="update-time">📅 最后更新: 加载中...</span>
         </div>
 
@@ -214,29 +248,60 @@
         const grid = document.getElementById('product-grid');
         const searchInput = document.getElementById('search');
         const countLabel = document.getElementById('item-count');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+
+        let currentDiscount = '70% off';
+        let currentSearch = '';
+
+        function filterAndRender() {
+            if (!window.products) return;
+
+            let filtered = window.products;
+
+            // Filter by discount
+            if (currentDiscount !== 'all') {
+                filtered = filtered.filter(p => p.discount === currentDiscount);
+            }
+
+            // Filter by search
+            if (currentSearch) {
+                filtered = filtered.filter(p =>
+                    p.name.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+            }
+
+            renderProducts(filtered);
+        }
 
         function renderProducts(items) {
             grid.innerHTML = '';
             countLabel.textContent = `${items.length} 件`;
+
+            if (items.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">未找到相关产品</p>';
+                return;
+            }
 
             items.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card bg-white rounded-lg overflow-hidden flex flex-col shadow-md';
 
                 const imgUrl = product.image_url || 'https://via.placeholder.com/300x400?text=No+Image';
+                const price = product.discounted_price || 'N/A';
+                const originalPrice = product.original_price || 'N/A';
 
                 card.innerHTML = `
                     <a href="${product.url}" target="_blank" class="block relative product-img overflow-hidden bg-gray-100">
                         <img src="${imgUrl}" alt="${product.name}" class="w-full h-full object-cover object-center" loading="lazy">
-                        <div class="discount-badge absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white font-bold rounded">
+                        <div class="discount-badge absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white font-bold rounded px-1.5 py-0.5">
                             ${product.discount || 'SALE'}
                         </div>
                     </a>
                     <div class="product-info flex-1 flex flex-col">
                         <h3 class="product-name font-medium text-gray-700 line-clamp-2 mb-1 sm:mb-2" title="${product.name}">${product.name}</h3>
                         <div class="mt-auto flex items-baseline gap-1 sm:gap-2">
-                            <span class="product-price font-bold text-red-500">¥${product.discounted_price}</span>
-                            <span class="product-original text-gray-500 line-through">¥${product.original_price}</span>
+                            <span class="product-price font-bold text-red-500">¥${price}</span>
+                            <span class="product-original text-gray-500 line-through">¥${originalPrice}</span>
                         </div>
                     </div>
                 `;
@@ -245,19 +310,27 @@
         }
 
         if (window.products) {
-            renderProducts(window.products);
+            filterAndRender();
 
             // 动态显示更新时间
             if (window.updateTime) {
                 document.getElementById('update-time').textContent = `📅 最后更新: ${window.updateTime}`;
             }
 
+            // Tab switching
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentDiscount = btn.dataset.discount;
+                    filterAndRender();
+                });
+            });
+
+            // Search input
             searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtered = window.products.filter(p =>
-                    p.name.toLowerCase().includes(term)
-                );
-                renderProducts(filtered);
+                currentSearch = e.target.value;
+                filterAndRender();
             });
 
             // 回到顶部逻辑
