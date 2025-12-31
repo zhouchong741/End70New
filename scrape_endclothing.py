@@ -130,9 +130,9 @@ def get_total_pages(soup):
     return None
 
 def extract_products(soup):
-    """提取所有 70% off 的产品信息"""
+    """提取所有 70% 和 60% 65% off 的产品信息"""
     products = []
-    discount_spans = soup.find_all(string=re.compile(r'70% off'))
+    discount_spans = soup.find_all(string=re.compile(r'70% off|60% off|65% off'))
     
     if not discount_spans:
         return []
