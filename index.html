@@ -275,11 +275,11 @@
                 filtered = filtered.filter(p => p.discount === currentDiscount);
             }
 
-            // Filter by brand
+            // Filter by brand (Case-insensitive)
             if (currentBrand !== 'all') {
                 filtered = filtered.filter(p => {
                     const brand = extractBrand(p.name);
-                    return brand === currentBrand;
+                    return brand.toLowerCase() === currentBrand.toLowerCase();
                 });
             }
 
@@ -330,10 +330,20 @@
         }
 
         if (window.products) {
-            // Initialize brands in dropdown
-            const brands = new Set();
-            window.products.forEach(p => brands.add(extractBrand(p.name)));
-            const sortedBrands = Array.from(brands).sort();
+            // Initialize brands in dropdown (De-duplicate case-insensitively)
+            const brandsMap = new Map(); // lowercase -> original
+            window.products.forEach(p => {
+                const brand = extractBrand(p.name);
+                const lower = brand.toLowerCase();
+                if (!brandsMap.has(lower)) {
+                    brandsMap.set(lower, brand);
+                }
+            });
+
+            const sortedBrands = Array.from(brandsMap.values()).sort((a, b) =>
+                a.toLowerCase().localeCompare(b.toLowerCase())
+            );
+
             sortedBrands.forEach(brand => {
                 const option = document.createElement('option');
                 option.value = brand;
