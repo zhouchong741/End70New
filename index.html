@@ -197,8 +197,12 @@
                     <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">End Clothing Sale</h1>
                     <p class="text-gray-500 text-xs sm:text-sm mt-1">Discount Collection</p>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                     <span class="text-xs sm:text-sm text-gray-500" id="item-count">Loading...</span>
+                    <select id="brand-filter"
+                        class="search-box px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg max-w-[120px] sm:max-w-[150px]">
+                        <option value="all">所有品牌</option>
+                    </select>
                     <input type="text" id="search" placeholder="搜索产品..."
                         class="search-box w-32 sm:w-40 lg:w-48 px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg">
                 </div>
@@ -248,10 +252,18 @@
         const grid = document.getElementById('product-grid');
         const searchInput = document.getElementById('search');
         const countLabel = document.getElementById('item-count');
+        const brandFilter = document.getElementById('brand-filter');
         const tabBtns = document.querySelectorAll('.tab-btn');
 
         let currentDiscount = '70% off';
         let currentSearch = '';
+        let currentBrand = 'all';
+
+        /* BRAND EXTRACTION */
+        function extractBrand(name) {
+            if (!name) return "Unknown";
+            return name.trim().split(" ")[0];
+        }
 
         function filterAndRender() {
             if (!window.products) return;
@@ -261,6 +273,14 @@
             // Filter by discount
             if (currentDiscount !== 'all') {
                 filtered = filtered.filter(p => p.discount === currentDiscount);
+            }
+
+            // Filter by brand
+            if (currentBrand !== 'all') {
+                filtered = filtered.filter(p => {
+                    const brand = extractBrand(p.name);
+                    return brand === currentBrand;
+                });
             }
 
             // Filter by search
@@ -310,6 +330,17 @@
         }
 
         if (window.products) {
+            // Initialize brands in dropdown
+            const brands = new Set();
+            window.products.forEach(p => brands.add(extractBrand(p.name)));
+            const sortedBrands = Array.from(brands).sort();
+            sortedBrands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                brandFilter.appendChild(option);
+            });
+
             filterAndRender();
 
             // 动态显示更新时间
@@ -325,6 +356,12 @@
                     currentDiscount = btn.dataset.discount;
                     filterAndRender();
                 });
+            });
+
+            // Brand filter change
+            brandFilter.addEventListener('change', (e) => {
+                currentBrand = e.target.value;
+                filterAndRender();
             });
 
             // Search input
