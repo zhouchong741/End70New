@@ -208,7 +208,8 @@ def extract_products(soup):
 def main():
     print("Loading existing data...")
     all_products_dict = load_existing_data()
-    print(f"Loaded {len(all_products_dict)} existing products.")
+    initial_count = len(all_products_dict)
+    print(f"Loaded {initial_count} existing products.")
     
     current_run_urls = set()
     
@@ -265,6 +266,28 @@ def main():
         print(f"Removed {len(keys_to_remove)} old items. Final count: {len(all_products_dict)}")
         save_data(all_products_dict)
         print(f"Final save to {OUTPUT_FILE} and {DATA_JS_FILE}")
+
+        # Calculate stats for notification
+        final_count = len(all_products_dict)
+        diff = final_count - initial_count
+        
+        if diff > 0:
+            change_desc = f"增加 {diff}"
+        elif diff < 0:
+            change_desc = f"减少 {abs(diff)}"
+        else:
+            change_desc = "无变化"
+            
+        # Write to GITHUB_ENV if running in GitHub Actions
+        env_file = os.getenv('GITHUB_ENV')
+        if env_file:
+            try:
+                with open(env_file, "a", encoding='utf-8') as f:
+                    f.write(f"PRODUCT_COUNT={final_count}\n")
+                    f.write(f"PRODUCT_CHANGE_DESC={change_desc}\n")
+                print(f"Written stats to GITHUB_ENV: Count={final_count}, Change={change_desc}")
+            except Exception as e:
+                print(f"Error writing to GITHUB_ENV: {e}")
 
     except KeyboardInterrupt:
         print("Scraping interrupted by user. Saving current progress...")
