@@ -165,14 +165,16 @@
         }
 
         /* Tab 样式 */
-        .tab-btn {
+        .tab-btn,
+        .type-btn {
             background: #e5e5e5;
             color: #666;
             white-space: nowrap;
             cursor: pointer;
         }
 
-        .tab-btn.active {
+        .tab-btn.active,
+        .type-btn.active {
             background: #ef4444;
             color: white;
         }
@@ -209,7 +211,15 @@
             </div>
         </header>
 
-        <!-- Tabs -->
+        <!-- Type Tabs -->
+        <div class="flex gap-2 mb-4" role="group" aria-label="商品类型">
+            <button class="type-btn active px-5 py-2 rounded-full text-sm font-medium transition-colors"
+                data-type="men" aria-pressed="true">Men</button>
+            <button class="type-btn px-5 py-2 rounded-full text-sm font-medium transition-colors"
+                data-type="women" aria-pressed="false">Women</button>
+        </div>
+
+        <!-- Discount Tabs -->
         <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
             <button class="tab-btn active px-4 py-2 rounded-full text-sm font-medium transition-colors"
                 data-discount="70% off">70% Off</button>
@@ -254,7 +264,9 @@
         const countLabel = document.getElementById('item-count');
         const brandFilter = document.getElementById('brand-filter');
         const tabBtns = document.querySelectorAll('.tab-btn');
+        const typeBtns = document.querySelectorAll('.type-btn');
 
+        let currentType = 'men';
         let currentDiscount = '70% off';
         let currentSearch = '';
         let currentBrand = 'all';
@@ -268,7 +280,7 @@
         function filterAndRender() {
             if (!window.products) return;
 
-            let filtered = window.products;
+            let filtered = getTypeProducts();
 
             // Filter by discount
             if (currentDiscount !== 'all') {
@@ -329,10 +341,14 @@
             });
         }
 
-        if (window.products) {
-            // Initialize brands in dropdown (De-duplicate case-insensitively)
+        function getTypeProducts() {
+            return window.products.filter(p => (p.type || 'men') === currentType);
+        }
+
+        function updateBrands() {
+            // Show brands belonging to the selected type.
             const brandsMap = new Map(); // lowercase -> original
-            window.products.forEach(p => {
+            getTypeProducts().forEach(p => {
                 const brand = extractBrand(p.name);
                 const lower = brand.toLowerCase();
                 if (!brandsMap.has(lower)) {
@@ -344,6 +360,7 @@
                 a.toLowerCase().localeCompare(b.toLowerCase())
             );
 
+            brandFilter.innerHTML = '<option value="all">所有品牌</option>';
             sortedBrands.forEach(brand => {
                 const option = document.createElement('option');
                 option.value = brand;
@@ -351,6 +368,12 @@
                 brandFilter.appendChild(option);
             });
 
+            currentBrand = brandsMap.get(currentBrand.toLowerCase()) || 'all';
+            brandFilter.value = currentBrand;
+        }
+
+        if (window.products) {
+            updateBrands();
             filterAndRender();
 
             // 动态显示更新时间
@@ -358,7 +381,21 @@
                 document.getElementById('update-time').textContent = `📅 最后更新: ${window.updateTime}`;
             }
 
-            // Tab switching
+            // Type switching
+            typeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentType = btn.dataset.type;
+                    typeBtns.forEach(b => {
+                        const active = b === btn;
+                        b.classList.toggle('active', active);
+                        b.setAttribute('aria-pressed', String(active));
+                    });
+                    updateBrands();
+                    filterAndRender();
+                });
+            });
+
+            // Discount switching
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     tabBtns.forEach(b => b.classList.remove('active'));

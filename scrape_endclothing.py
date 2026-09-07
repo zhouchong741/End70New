@@ -14,7 +14,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
-BASE_URL = "https://www.endclothing.com/cn/sale/all-sale"
+BASE_URLS = {
+    "men": "https://www.endclothing.com/cn/sale/all-sale",
+    "women": "https://www.endclothing.com/cn/women/sale/all-sale",
+}
 OUTPUT_FILE = "endclothing_70off.json"
 DATA_JS_FILE = "data.js"
 HEADERS = {
@@ -26,8 +29,10 @@ def load_existing_data():
         try:
             with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                # Convert list to dict keyed by url for easy lookup
-                return {item['url']: item for item in data}
+                # Existing records without a type belong to Men.
+                for item in data:
+                    item.setdefault('type', 'men')
+                return {(item['type'], item['url']): item for item in data}
         except Exception as e:
             print(f"Error loading existing data: {e}")
     return {}
@@ -67,10 +72,10 @@ def create_chrome_options():
     
     return options
 
-def get_page_soup(page_num, driver=None):
+def get_page_soup(page_num, driver=None, product_type='men'):
     """使用Selenium获取渲染后的页面"""
-    url = f"{BASE_URL}?page={page_num}"
-    print(f"Fetching page {page_num}...", end=" ", flush=True)
+    url = f"{BASE_URLS[product_type]}?page={page_num}"
+    print(f"Fetching {product_type} page {page_num}...", end=" ", flush=True)
     
     close_driver = False
     if driver is None:
@@ -129,7 +134,7 @@ def get_total_pages(soup):
     
     return None
 
-def extract_products(soup):
+def extract_products(soup, product_type='men'):
     """提取所有 70% 和 60% 65% off 的产品信息"""
     products = []
     discount_spans = soup.find_all(string=re.compile(r'70% off|60% off|65% off'))
@@ -180,6 +185,7 @@ def extract_products(soup):
                 discounted_price = int(re.sub(r'[^\d]', '', sale_price_str))
                 
                 products.append({
+                    "type": product_type,
                     "name": name,
                     "original_price": original_price,
                     "discounted_price": discounted_price,
@@ -197,6 +203,7 @@ def extract_products(soup):
                 elif "60% off" in text_node: discount_val = "60% off"
                 
                 products.append({
+                    "type": product_type,
                     "name": name,
                     "raw_content": content,
                     "url": full_url,
@@ -211,61 +218,64 @@ def main():
     initial_count = len(all_products_dict)
     print(f"Loaded {initial_count} existing products.")
     
-    current_run_urls = set()
-    
     # 创建共享的Selenium driver
     print("Initializing Selenium WebDriver...")
     options = create_chrome_options()
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
     try:
-        soup = get_page_soup(1, driver)
-        if not soup:
-            print("Failed to load first page. Exiting.")
-            return
-
-        total_pages = get_total_pages(soup)
-        if not total_pages:
-            print("Could not determine total pages automatically. Defaulting to 100.")
-            total_pages = 100
-
-        print("Processing page 1...")
-        products = extract_products(soup)
-        print(f"Found {len(products)} items on page 1.")
-        
-        for p in products:
-            url = p['url']
-            current_run_urls.add(url)
-            all_products_dict[url] = p
-
-        for page in range(2, total_pages + 1):
-            soup = get_page_soup(page, driver)
+        for product_type in BASE_URLS:
+            current_run_keys = set()
+            soup = get_page_soup(1, driver, product_type)
             if not soup:
+                print(f"Failed to load {product_type} first page. Keeping existing data.")
                 continue
-            
-            products = extract_products(soup)
-            print(f"Found {len(products)} items on page {page}. Total unique items so far: {len(all_products_dict)}")
-            
-            for p in products:
-                url = p['url']
-                current_run_urls.add(url)
-                all_products_dict[url] = p
-            
-            if len(products) > 0 or page % 5 == 0:
-                save_data(all_products_dict)
-                print(f"Progress saved.")
 
-            time.sleep(1)
+            total_pages = get_total_pages(soup)
+            if not total_pages:
+                print("Could not determine total pages automatically. Defaulting to 100.")
+                total_pages = 100
 
-        # If loop completes, prune old data
-        print("Scraping complete. Cleaning up old data...")
-        keys_to_remove = [url for url in all_products_dict if url not in current_run_urls]
-        for url in keys_to_remove:
-            del all_products_dict[url]
+            print("Processing page 1...")
+            products = extract_products(soup, product_type)
+            print(f"Found {len(products)} items on page 1.")
         
-        print(f"Removed {len(keys_to_remove)} old items. Final count: {len(all_products_dict)}")
-        save_data(all_products_dict)
-        print(f"Final save to {OUTPUT_FILE} and {DATA_JS_FILE}")
+            for p in products:
+                key = (product_type, p['url'])
+                current_run_keys.add(key)
+                all_products_dict[key] = p
+
+            for page in range(2, total_pages + 1):
+                soup = get_page_soup(page, driver, product_type)
+                if not soup:
+                    continue
+            
+                products = extract_products(soup, product_type)
+                print(f"Found {len(products)} items on page {page}. Total unique items so far: {len(all_products_dict)}")
+            
+                for p in products:
+                    key = (product_type, p['url'])
+                    current_run_keys.add(key)
+                    all_products_dict[key] = p
+            
+                if len(products) > 0 or page % 5 == 0:
+                    save_data(all_products_dict)
+                    print(f"Progress saved.")
+
+                time.sleep(1)
+
+            # Only prune old data for the current type
+            print(f"{product_type} scraping complete. Cleaning up old data...")
+            keys_to_remove = [
+                key for key in all_products_dict
+                if key[0] == product_type and key not in current_run_keys
+            ]
+            for key in keys_to_remove:
+                del all_products_dict[key]
+        
+            print(f"Removed {len(keys_to_remove)} old items. Final count: {len(all_products_dict)}")
+            save_data(all_products_dict)
+            print(f"Final save to {OUTPUT_FILE} and {DATA_JS_FILE}")
 
         # Calculate stats for notification
         final_count = len(all_products_dict)

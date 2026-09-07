@@ -1,12 +1,13 @@
 # End Clothing 70% Off 折扣爬虫
 
-这是一个 Python 脚本，用于自动从 End Clothing (CN) 网站的促销页面抓取所有折扣力度为 **70% off** 的商品，并将结果保存为 JSON 文件。
+这是一个 Python 脚本，用于自动从 End Clothing (CN) 网站的 Men 和 Women 促销页面抓取 **60%、65%、70% off** 的商品，并将结果保存为 JSON 文件。
 
 ## 功能特点
 
 - **动态页面抓取** - 使用 Selenium 模拟浏览器行为，完美支持动态加载的内容（如图片）
 - **自动遍历** - 自动识别总页数并遍历所有促销页面
-- **精准筛选** - 筛选出折扣为 "70% off" 的商品
+- **双类型抓取** - 分别抓取 Men 和 Women 商品，按类型独立去重和清理旧数据
+- **精准筛选** - 筛选出折扣为 "60% off"、"65% off"、"70% off" 的商品
 - **完整信息** - 提取商品名称、原价、折后价、购买链接和**高清产品图片**
 - **断点续传** - 支持增量抓取，自动去重
 - **可视化展示** - 提供 HTML 页面直接查看抓取结果
@@ -43,7 +44,14 @@ python scrape_endclothing.py
 脚本会自动下载匹配的 ChromeDriver 并启动无头浏览器进行抓取。
 
 4. **查看结果**：
-   抓取完成后，直接在浏览器中打开 `view_products.html` 文件，即可通过精美的网格视图浏览所有打折商品。
+   抓取完成后，直接在浏览器中打开 `index.html` 文件，即可浏览所有打折商品。顶部可切换 Men / Women，再按折扣、品牌和名称筛选；默认显示 Men 的 70% off 商品，旧数据未包含类型时按 Men 展示。
+
+抓取来源：
+
+- Men：https://www.endclothing.com/cn/sale/all-sale
+- Women：https://www.endclothing.com/cn/women/sale/all-sale
+
+GitHub Actions 每 3 小时自动运行，也可手动触发；下一次抓取会将 Women 数据写入现有数据文件。
 
 ## 输出结果
 
@@ -54,6 +62,7 @@ python scrape_endclothing.py
 ```json
 [
   {
+    "type": "men",
     "name": "Adidas TaekwondoWhite & Black",
     "original_price": 719,
     "discounted_price": 216,
