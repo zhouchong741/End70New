@@ -72,6 +72,6 @@ jobs:
               "msgtype": "markdown",
               "markdown": {
                 "title": "End70 自动更新成功",
-                "text": "### End70 数据已更新 🚀\n\n爬虫任务完成，页面已部署。\n\n**当前数量**: ${{ env.PRODUCT_COUNT }}\n**变动情况**: ${{ env.PRODUCT_CHANGE_DESC }}\n\n[点击访问](${{ steps.deployment.outputs.page_url }})"
+                "text": "### End70 数据已更新 🚀\n\n爬虫任务完成，页面已部署。\n\n**Men**: ${{ env.MEN_PRODUCT_COUNT }}（${{ env.MEN_CHANGE_DESC }}）\n**Women**: ${{ env.WOMEN_PRODUCT_COUNT }}（${{ env.WOMEN_CHANGE_DESC }}）\n**总计**: ${{ env.PRODUCT_COUNT }}（${{ env.PRODUCT_CHANGE_DESC }}）\n\n[点击访问](${{ steps.deployment.outputs.page_url }})"
               }
             }'

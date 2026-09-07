@@ -296,6 +296,11 @@ def main():
     try:
         existing = load_existing_data()
         initial_count = len(existing)
+        initial_counts = {
+            product_type: sum(1 for product in existing.values()
+                              if product.get('type', 'men') == product_type)
+            for product_type in BASE_URLS
+        }
         print(f"Loaded {initial_count} existing products.", flush=True)
         # Install once before starting workers to avoid concurrent cache writes.
         driver_path = ChromeDriverManager().install()
@@ -324,11 +329,27 @@ def main():
         final_count = len(all_products_dict)
         diff = final_count - initial_count
         change_desc = f"增加 {diff}" if diff > 0 else f"减少 {abs(diff)}" if diff < 0 else "无变化"
+        final_counts = {
+            product_type: len(results[product_type])
+            for product_type in BASE_URLS
+        }
+        change_descs = {}
+        for product_type in BASE_URLS:
+            type_diff = final_counts[product_type] - initial_counts[product_type]
+            change_descs[product_type] = (
+                f"增加 {type_diff}" if type_diff > 0
+                else f"减少 {abs(type_diff)}" if type_diff < 0
+                else "无变化"
+            )
         env_file = os.getenv('GITHUB_ENV')
         if env_file:
             with open(env_file, 'a', encoding='utf-8') as f:
                 f.write(f"PRODUCT_COUNT={final_count}\n")
                 f.write(f"PRODUCT_CHANGE_DESC={change_desc}\n")
+                f.write(f"MEN_PRODUCT_COUNT={final_counts['men']}\n")
+                f.write(f"MEN_CHANGE_DESC={change_descs['men']}\n")
+                f.write(f"WOMEN_PRODUCT_COUNT={final_counts['women']}\n")
+                f.write(f"WOMEN_CHANGE_DESC={change_descs['women']}\n")
         print(f"Complete: products={final_count} elapsed={time.perf_counter() - started:.2f}s", flush=True)
         return 0
     except KeyboardInterrupt:

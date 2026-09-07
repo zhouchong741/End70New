@@ -96,6 +96,41 @@ class ScraperMainTests(unittest.TestCase):
         self.assertEqual(len(saved), 2, "The same URL in both types must remain separate")
         self.chrome.assert_not_called()
 
+    def test_github_env_contains_changes_for_each_product_type(self):
+        existing_products = [
+            product("men", "https://www.endclothing.com/cn/old-men-1.html"),
+            product("men", "https://www.endclothing.com/cn/old-men-2.html"),
+            product("women", "https://www.endclothing.com/cn/old-women.html"),
+        ]
+        self.existing.return_value = {
+            (item["type"], item["url"]): item for item in existing_products
+        }
+
+        def scrape_type(product_type, driver_path):
+            count = 1 if product_type == "men" else 3
+            items = [
+                product(product_type, f"https://www.endclothing.com/cn/{product_type}-{index}.html")
+                for index in range(count)
+            ]
+            return {(item["type"], item["url"]): item for item in items}
+
+        self.worker.side_effect = scrape_type
+        with tempfile.TemporaryDirectory() as directory:
+            env_file = Path(directory) / "github-env"
+            with patch.dict(os.environ, {"GITHUB_ENV": str(env_file)}):
+                self.assertEqual(scraper.main(), 0)
+            env_values = dict(
+                line.split("=", 1)
+                for line in env_file.read_text(encoding="utf-8").splitlines()
+            )
+
+        self.assertEqual(env_values["PRODUCT_COUNT"], "4")
+        self.assertEqual(env_values["PRODUCT_CHANGE_DESC"], "增加 1")
+        self.assertEqual(env_values["MEN_PRODUCT_COUNT"], "1")
+        self.assertEqual(env_values["MEN_CHANGE_DESC"], "减少 1")
+        self.assertEqual(env_values["WOMEN_PRODUCT_COUNT"], "3")
+        self.assertEqual(env_values["WOMEN_CHANGE_DESC"], "增加 2")
+
     def test_one_failed_type_does_not_save_partial_results(self):
         def scrape_type(product_type, driver_path):
             if product_type == "women":
