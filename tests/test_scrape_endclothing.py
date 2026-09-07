@@ -3,6 +3,7 @@ import math
 import os
 import sys
 import threading
+import tempfile
 import unittest
 from contextlib import ExitStack
 from pathlib import Path
@@ -49,7 +50,7 @@ def page_fixture(total=3, page_size=2, page=1, product_type="men", card_count=No
         f'<div id="plpBody">{cards}</div>'
         f'<script id="__NEXT_DATA__" type="application/json">{json.dumps(data)}</script>'
     )
-    return scraper.BeautifulSoup(html, "html.parser")
+    return scraper.BeautifulSoup(html, "lxml")
 
 
 class ScraperMainTests(unittest.TestCase):
@@ -129,48 +130,47 @@ class ScrapeTypeTests(unittest.TestCase):
         self.chrome = self.patches.enter_context(patch.object(scraper.webdriver, "Chrome"))
         self.service = self.patches.enter_context(patch.object(scraper, "Service"))
         self.manager = self.patches.enter_context(patch.object(scraper, "ChromeDriverManager"))
-        self.get_soup = self.patches.enter_context(patch.object(scraper, "get_page_soup"))
-        self.get_info = self.patches.enter_context(patch.object(scraper, "get_page_info"))
+        self.get_page = self.patches.enter_context(patch.object(scraper, "get_page_data"))
         self.extract = self.patches.enter_context(patch.object(scraper, "extract_products"))
-        self.get_soup.return_value = sentinel.soup
-        self.get_info.return_value = {
+        self.info = {
             "nbHits": 1,
             "nbPages": 1,
             "page": 0,
             "hitsPerPage": 120,
             "hits": [{"url": "/cn/shared.html", "sale_percentage": "70%"}],
         }
+        self.get_page.return_value = (sentinel.cards, self.info)
 
     def test_successful_types_use_and_close_independent_drivers(self):
         men_driver, women_driver = Mock(name="men_driver"), Mock(name="women_driver")
         self.chrome.side_effect = [men_driver, women_driver]
-        self.extract.side_effect = lambda soup, kind: [product(kind)]
+        self.extract.side_effect = lambda cards, kind: [product(kind)]
 
         men_result = scraper.scrape_type("men", "/mock/chromedriver")
         women_result = scraper.scrape_type("women", "/mock/chromedriver")
 
         self.assertEqual(men_result, {("men", product("men")["url"]): product("men")})
         self.assertEqual(women_result, {("women", product("women")["url"]): product("women")})
-        self.get_soup.assert_any_call(1, men_driver, "men")
-        self.get_soup.assert_any_call(1, women_driver, "women")
+        self.get_page.assert_any_call(1, men_driver, "men")
+        self.get_page.assert_any_call(1, women_driver, "women")
         self.assertEqual(self.chrome.call_count, 2)
         men_driver.quit.assert_called_once_with()
         women_driver.quit.assert_called_once_with()
         self.manager.assert_not_called()
 
     def test_later_page_failure_raises_and_closes_driver(self):
-        self.get_info.return_value.update(nbHits=2, nbPages=2, hitsPerPage=1)
-        self.get_soup.side_effect = [sentinel.soup, RuntimeError("Page 2 failed")]
+        self.info.update(nbHits=2, nbPages=2, hitsPerPage=1)
+        self.get_page.side_effect = [(sentinel.cards, self.info), RuntimeError("Page 2 failed")]
         self.extract.return_value = [product("men")]
 
         with self.assertRaisesRegex(RuntimeError, "Page 2 failed"):
             scraper.scrape_type("men", "/mock/chromedriver")
 
-        self.get_soup.assert_any_call(2, self.chrome.return_value, "men")
+        self.get_page.assert_any_call(2, self.chrome.return_value, "men")
         self.chrome.return_value.quit.assert_called_once_with()
 
     def test_first_page_failure_closes_driver(self):
-        self.get_soup.side_effect = RuntimeError("First page failed")
+        self.get_page.side_effect = RuntimeError("First page failed")
 
         with self.assertRaisesRegex(RuntimeError, "First page failed"):
             scraper.scrape_type("women", "/mock/chromedriver")
@@ -189,7 +189,7 @@ class ScrapeTypeTests(unittest.TestCase):
         self.chrome.return_value.quit.assert_called_once_with()
 
     def test_empty_type_returns_empty_results_and_closes_driver(self):
-        self.get_info.return_value.update(nbHits=0, nbPages=0, hits=[])
+        self.info.update(nbHits=0, nbPages=0, hits=[])
 
         self.assertEqual(scraper.scrape_type("women", "/mock/chromedriver"), {})
 
@@ -205,7 +205,7 @@ class ScrapeTypeTests(unittest.TestCase):
         self.chrome.return_value.quit.assert_called_once_with()
 
 
-class GetPageSoupTests(unittest.TestCase):
+class GetPageDataTests(unittest.TestCase):
     def setUp(self):
         self.patches = ExitStack()
         self.addCleanup(self.patches.close)
@@ -216,9 +216,10 @@ class GetPageSoupTests(unittest.TestCase):
         self.driver.page_source = str(page_fixture())
 
     def test_ready_page_does_not_use_fixed_sleep(self):
-        soup = scraper.get_page_soup(1, self.driver, "men")
+        cards, info = scraper.get_page_data(1, self.driver, "men")
 
-        self.assertEqual(scraper.get_page_info(soup, "men", 1)["nbHits"], 3)
+        self.assertEqual(info["nbHits"], 3)
+        self.assertEqual(len(cards), 2)
         self.wait.return_value.until.assert_called_once()
         self.sleep.assert_not_called()
         self.driver.quit.assert_not_called()
@@ -226,9 +227,10 @@ class GetPageSoupTests(unittest.TestCase):
     def test_transient_load_failure_is_retried(self):
         self.driver.get.side_effect = [RuntimeError("Temporary loading error"), None]
 
-        soup = scraper.get_page_soup(1, self.driver, "men")
+        cards, info = scraper.get_page_data(1, self.driver, "men")
 
-        self.assertEqual(scraper.get_page_info(soup, "men", 1)["nbHits"], 3)
+        self.assertEqual(info["nbHits"], 3)
+        self.assertEqual(len(cards), 2)
         self.assertEqual(self.driver.get.call_count, 2)
         self.sleep.assert_called_once_with(scraper.PAGE_INTERVAL)
 
@@ -236,11 +238,19 @@ class GetPageSoupTests(unittest.TestCase):
         self.driver.get.side_effect = RuntimeError("Page load failed")
 
         with self.assertRaisesRegex(RuntimeError, "failed after retries"):
-            scraper.get_page_soup(1, self.driver, "men")
+            scraper.get_page_data(1, self.driver, "men")
 
         self.assertEqual(self.driver.get.call_count, scraper.PAGE_ATTEMPTS)
         self.assertEqual(self.sleep.call_count, scraper.PAGE_ATTEMPTS - 1)
         self.driver.quit.assert_not_called()
+
+    def test_incomplete_cards_are_retried_then_rejected(self):
+        self.driver.page_source = str(page_fixture(card_count=1))
+
+        with self.assertRaisesRegex(RuntimeError, "failed after retries"):
+            scraper.get_page_data(1, self.driver, "men")
+
+        self.assertEqual(self.driver.get.call_count, scraper.PAGE_ATTEMPTS)
 
 
 class PageInfoTests(unittest.TestCase):
@@ -315,16 +325,94 @@ class ExtractProductsTests(unittest.TestCase):
             f'<img srcset="{image_url} 640w, https://images.example.com/large.jpg 1280w">'
             '<span>Test product</span><span>CN¥1,000</span><span>CN¥300</span>'
             '<span>70% off</span></a></div>',
-            "html.parser",
+            "lxml",
         )
 
-        products = scraper.extract_products(soup, "women")
+        products = scraper.extract_products(soup.select(scraper.PRODUCT_CARD_SELECTOR), "women")
 
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0]["image_url"], image_url)
         self.assertEqual(products[0]["type"], "women")
         self.assertEqual(products[0]["original_price"], 1000)
         self.assertEqual(products[0]["discounted_price"], 300)
+
+
+class ProductUrlTests(unittest.TestCase):
+    def test_only_query_id_is_removed(self):
+        base = "https://www.endclothing.com/cn/shared.html"
+        cases = [
+            (base, base),
+            (base + "?queryID=first", base),
+            (base + "?queryID=first&size=UK%209#details", base + "?size=UK%209#details"),
+            (base + "?size=9&queryID=first&size=10", base + "?size=9&size=10"),
+            (base + "?queryID=first&queryID=second#details", base + "#details"),
+            (base + "?queryID=&colour=red", base + "?colour=red"),
+            (base + "?queryID&colour=red", base + "?colour=red"),
+            (base + "?query%49D=first&size=9", base + "?size=9"),
+            (base + "?ref=queryID%3Dkeep&size=", base + "?ref=queryID%3Dkeep&size="),
+        ]
+        for original, expected in cases:
+            with self.subTest(url=original):
+                self.assertEqual(scraper.normalize_product_url(original), expected)
+
+    def test_existing_data_is_normalized_and_deduplicated_per_type(self):
+        first = product("men", "https://www.endclothing.com/cn/shared.html?queryID=first")
+        del first["type"]  # Legacy records default to Men.
+        second = product("men", "https://www.endclothing.com/cn/shared.html?queryID=second")
+        women = product("women", second["url"])
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "existing.json"
+            original = json.dumps([first, second, women])
+            source.write_text(original, encoding="utf-8")
+            with patch.object(scraper, "OUTPUT_FILE", str(source)):
+                loaded = scraper.load_existing_data()
+            self.assertEqual(source.read_text(encoding="utf-8"), original)
+
+        self.assertEqual(loaded, {
+            (kind, product(kind)["url"]): product(kind) for kind in ("men", "women")
+        })
+
+    def test_cross_page_query_ids_do_not_create_duplicate_saved_products(self):
+        driver = Mock()
+
+        def load_page(url):
+            page = int(url.rsplit("=", 1)[1])
+            soup = page_fixture(total=2, page_size=1, page=page)
+            card = soup.select(scraper.PRODUCT_CARD_SELECTOR)[0]
+            card["href"] = f"/cn/shared.html?queryID=page-{page}"
+            content = scraper.BeautifulSoup(
+                '<img src="https://images.example.com/product.jpg">'
+                '<span>men</span><span>CN¥1,000</span><span>CN¥300</span><span>70% off</span>',
+                "lxml",
+            )
+            for node in list(content.body.contents):
+                card.append(node)
+            script = soup.find("script", id="__NEXT_DATA__")
+            data = json.loads(script.string)
+            data["props"]["initialProps"]["pageProps"]["initialAlgoliaState"]["results"]["hits"][0][
+                "sale_percentage"
+            ] = "70%"
+            script.string = json.dumps(data)
+            driver.page_source = str(soup)
+
+        driver.get.side_effect = load_page
+        with patch.object(scraper.webdriver, "Chrome", return_value=driver), \
+                patch.object(scraper, "WebDriverWait"), \
+                patch.object(scraper.time, "sleep"), patch("builtins.print"):
+            results = scraper.scrape_type("men", "/mock/chromedriver")
+
+        self.assertEqual(driver.get.call_count, 2)
+        self.assertEqual(results, {("men", product("men")["url"]): product("men")})
+        driver.quit.assert_called_once_with()
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "products.json"
+            javascript = Path(directory) / "data.js"
+            with patch.object(scraper, "OUTPUT_FILE", str(output)), \
+                    patch.object(scraper, "DATA_JS_FILE", str(javascript)):
+                scraper.save_data(results)
+            self.assertEqual(json.loads(output.read_text(encoding="utf-8")), [product("men")])
+            self.assertNotIn("queryID", javascript.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

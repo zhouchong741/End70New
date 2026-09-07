@@ -8,6 +8,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
+from urllib.parse import unquote, urlsplit, urlunsplit
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -27,6 +28,14 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 }
 
+def normalize_product_url(url):
+    """Remove the per-search queryID without changing other query parameters."""
+    parts = urlsplit(url)
+    query = '&'.join(part for part in parts.query.split('&')
+                     if unquote(part.partition('=')[0]) != 'queryID')
+    return urlunsplit(parts._replace(query=query))
+
+
 def load_existing_data():
     if os.path.exists(OUTPUT_FILE):
         try:
@@ -35,6 +44,7 @@ def load_existing_data():
                 # Existing records without a type belong to Men.
                 for item in data:
                     item.setdefault('type', 'men')
+                    item['url'] = normalize_product_url(item['url'])
                 return {(item['type'], item['url']): item for item in data}
         except Exception as e:
             raise RuntimeError(f"Cannot read existing data: {e}") from e
@@ -76,7 +86,7 @@ def create_chrome_options():
     
     return options
 
-def get_page_info(soup, product_type, page_num):
+def get_page_info(soup, product_type, page_num, cards=None):
     """Read authoritative pagination and reject redirects or incomplete lists."""
     try:
         data = json.loads(soup.find('script', id='__NEXT_DATA__').string)
@@ -96,13 +106,15 @@ def get_page_info(soup, product_type, page_num):
         if (total_pages and page_num > total_pages) or (not total_pages and page_num != 1):
             raise ValueError('Page outside the result set')
         expected_count = min(info['hitsPerPage'], max(0, info['nbHits'] - info['page'] * info['hitsPerPage']))
-        if len(info['hits']) != expected_count or len(soup.select(PRODUCT_CARD_SELECTOR)) != expected_count:
+        if cards is None:
+            cards = soup.select(PRODUCT_CARD_SELECTOR)
+        if len(info['hits']) != expected_count or len(cards) != expected_count:
             raise ValueError('Incomplete product list')
         if any(not isinstance(hit.get('sale_percentage'), str) for hit in info['hits']):
             raise ValueError('Missing product discount metadata')
         expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
         actual_targets = sum(bool(re.search(r'(?:70|65|60)% off', card.get_text()))
-                             for card in soup.select(PRODUCT_CARD_SELECTOR))
+                             for card in cards)
         if actual_targets != expected_targets:
             raise ValueError('Incomplete discount labels')
         return info
@@ -149,8 +161,8 @@ def page_is_ready(driver, product_type, page_num):
     """, BASE_URLS[product_type].split('/cn/', 1)[1], page_num - 1, PRODUCT_CARD_SELECTOR)
 
 
-def get_page_soup(page_num, driver, product_type='men'):
-    """Load a complete product page, with one bounded retry."""
+def get_page_data(page_num, driver, product_type='men'):
+    """Load and validate once, returning reusable cards and pagination metadata."""
     url = f"{BASE_URLS[product_type]}?page={page_num}"
     for attempt in range(1, PAGE_ATTEMPTS + 1):
         started = time.perf_counter()
@@ -161,11 +173,12 @@ def get_page_soup(page_num, driver, product_type='men'):
                 lambda current: page_is_ready(current, product_type, page_num)
             )
             ready = time.perf_counter()
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-            get_page_info(soup, product_type, page_num)
+            soup = BeautifulSoup(driver.page_source, 'lxml')
+            cards = soup.select(PRODUCT_CARD_SELECTOR)
+            info = get_page_info(soup, product_type, page_num, cards)
             print(f"[{product_type}] page {page_num}: load={loaded - started:.2f}s "
                   f"wait={ready - loaded:.2f}s parse={time.perf_counter() - ready:.2f}s", flush=True)
-            return soup
+            return cards, info
         except Exception as e:
             print(f"[{product_type}] page {page_num} attempt {attempt}/{PAGE_ATTEMPTS} failed: "
                   f"{type(e).__name__}: {e}", flush=True)
@@ -174,10 +187,9 @@ def get_page_soup(page_num, driver, product_type='men'):
             time.sleep(PAGE_INTERVAL)
 
 
-def extract_products(soup, product_type='men'):
+def extract_products(cards, product_type='men'):
     """提取所有 70% 和 60% 65% off 的产品信息"""
     products = []
-    cards = soup.select(PRODUCT_CARD_SELECTOR)
     discount_spans = [text for card in cards
                       for text in card.find_all(string=re.compile(r'70% off|60% off|65% off'))]
     
@@ -194,6 +206,7 @@ def extract_products(soup, product_type='men'):
             href = link.get('href')
             
             full_url = f"https://www.endclothing.com{href}" if href.startswith('/') else href
+            full_url = normalize_product_url(full_url)
             content = link.get_text(strip=True)
             
             # Choose a real URL; placeholders may coexist with lazy-load URLs.
@@ -250,8 +263,7 @@ def scrape_type(product_type, driver_path):
     try:
         driver = webdriver.Chrome(service=Service(driver_path), options=create_chrome_options())
         driver.set_page_load_timeout(30)
-        soup = get_page_soup(1, driver, product_type)
-        info = get_page_info(soup, product_type, 1)
+        cards, info = get_page_data(1, driver, product_type)
         total_pages = info['nbPages']
         print(f"[{product_type}] products={info['nbHits']} page_size={info['hitsPerPage']} "
               f"pages={total_pages}", flush=True)
@@ -259,9 +271,8 @@ def scrape_type(product_type, driver_path):
         for page in range(1, total_pages + 1):
             if page > 1:
                 time.sleep(PAGE_INTERVAL)
-                soup = get_page_soup(page, driver, product_type)
-                info = get_page_info(soup, product_type, page)
-            products = extract_products(soup, product_type)
+                cards, info = get_page_data(page, driver, product_type)
+            products = extract_products(cards, product_type)
             expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
             if len(products) != expected_targets:
                 raise ValueError(f'[{product_type}] Incomplete discount extraction on page {page}')
