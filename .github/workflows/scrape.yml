@@ -6,6 +6,10 @@ on:
     - cron: '0 */3 * * *'
   workflow_dispatch: # 允许手动触发
 
+concurrency:
+  group: endclothing-sale-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
@@ -36,7 +40,8 @@ jobs:
 
       - name: Run Scraper
         run: |
-          python scrape_endclothing.py
+          python -m unittest discover -s tests -v
+          python -u scrape_endclothing.py
 
       - name: Commit and Push changes
         run: |

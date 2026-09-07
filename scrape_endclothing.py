@@ -5,13 +5,13 @@ import json
 import time
 import math
 import os
+import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 BASE_URLS = {
@@ -20,6 +20,9 @@ BASE_URLS = {
 }
 OUTPUT_FILE = "endclothing_70off.json"
 DATA_JS_FILE = "data.js"
+PRODUCT_CARD_SELECTOR = '#plpBody a[data-test-id="ProductCard__ProductCardSC"]'
+PAGE_ATTEMPTS = 2
+PAGE_INTERVAL = 1
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 }
@@ -34,7 +37,7 @@ def load_existing_data():
                     item.setdefault('type', 'men')
                 return {(item['type'], item['url']): item for item in data}
         except Exception as e:
-            print(f"Error loading existing data: {e}")
+            raise RuntimeError(f"Cannot read existing data: {e}") from e
     return {}
 
 def save_data(products_dict):
@@ -55,6 +58,7 @@ def save_data(products_dict):
 def create_chrome_options():
     """创建Chrome选项，抑制不必要的警告和日志"""
     options = Options()
+    options.page_load_strategy = 'eager'
     options.add_argument('--headless=new')  # 使用新版headless模式
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
@@ -72,72 +76,110 @@ def create_chrome_options():
     
     return options
 
-def get_page_soup(page_num, driver=None, product_type='men'):
-    """使用Selenium获取渲染后的页面"""
-    url = f"{BASE_URLS[product_type]}?page={page_num}"
-    print(f"Fetching {product_type} page {page_num}...", end=" ", flush=True)
-    
-    close_driver = False
-    if driver is None:
-        close_driver = True
-        options = create_chrome_options()
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    
+def get_page_info(soup, product_type, page_num):
+    """Read authoritative pagination and reject redirects or incomplete lists."""
     try:
-        driver.get(url)
-        # 等待产品容器加载
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, "img"))
-        )
-        time.sleep(2)  # 额外等待确保图片加载
-        
-        html = driver.page_source
-        return BeautifulSoup(html, 'html.parser')
-    except Exception as e:
-        print(f"Error fetching page {page_num}: {e}")
-        return None
-    finally:
-        if close_driver and driver:
-            driver.quit()
+        data = json.loads(soup.find('script', id='__NEXT_DATA__').string)
+        query = data['query']
+        expected_route = BASE_URLS[product_type].split('/cn/', 1)[1].split('/')
+        if query.get('countryCode') != 'cn' or query.get('route') != expected_route:
+            raise ValueError('Unexpected country or product type')
+        info = data['props']['initialProps']['pageProps']['initialAlgoliaState']['results']
+        for key in ('nbHits', 'nbPages', 'page', 'hitsPerPage'):
+            if type(info[key]) is not int or info[key] < 0:
+                raise ValueError(f'Invalid pagination field: {key}')
+        if info['page'] != page_num - 1 or info['hitsPerPage'] == 0:
+            raise ValueError('Unexpected page number or page size')
+        total_pages = math.ceil(info['nbHits'] / info['hitsPerPage'])
+        if info['nbPages'] != total_pages:
+            raise ValueError('Inconsistent total pages')
+        if (total_pages and page_num > total_pages) or (not total_pages and page_num != 1):
+            raise ValueError('Page outside the result set')
+        expected_count = min(info['hitsPerPage'], max(0, info['nbHits'] - info['page'] * info['hitsPerPage']))
+        if len(info['hits']) != expected_count or len(soup.select(PRODUCT_CARD_SELECTOR)) != expected_count:
+            raise ValueError('Incomplete product list')
+        if any(not isinstance(hit.get('sale_percentage'), str) for hit in info['hits']):
+            raise ValueError('Missing product discount metadata')
+        expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
+        actual_targets = sum(bool(re.search(r'(?:70|65|60)% off', card.get_text()))
+                             for card in soup.select(PRODUCT_CARD_SELECTOR))
+        if actual_targets != expected_targets:
+            raise ValueError('Incomplete discount labels')
+        return info
+    except (AttributeError, KeyError, TypeError, ValueError) as e:
+        raise ValueError(f'[{product_type}] Invalid page {page_num}: {e}') from e
 
-def get_total_pages(soup):
-    try:
-        plp_body = soup.find(id='plpBody')
-        if plp_body:
-            first_div = plp_body.find('div')
-            if first_div:
-                divs = first_div.find_all('div', recursive=False)
-                if len(divs) >= 2:
-                    second_div = divs[1]
-                    span = second_div.find('span')
-                    if span:
-                        count_text = span.get_text(strip=True)
-                        count_match = re.search(r'(\d+)', count_text)
-                        if count_match:
-                            total_count = int(count_match.group(1))
-                            print(f"产品总数: {total_count}")
-                            
-                            product_links = soup.find_all('a', href=re.compile(r'/cn/.*\.html'))
-                            unique_links = set(l['href'] for l in product_links if l.get('href'))
-                            items_on_page = len(unique_links)
-                            
-                            if items_on_page == 0:
-                                items_on_page = 120
-                            
-                            print(f"每页商品数: {items_on_page}")
-                            
-                            total_pages = math.ceil(total_count / items_on_page)
-                            print(f"总页数: {total_pages}")
-                            return total_pages
-    except Exception as e:
-        print(f"获取总页数时出错: {e}")
-    
-    return None
+
+def page_is_ready(driver, product_type, page_num):
+    # Check URLs rather than image downloads; lazy images need not finish loading.
+    return driver.execute_script(r"""
+        const root = document.querySelector('#plpBody');
+        const script = document.getElementById('__NEXT_DATA__');
+        if (!root || !script) return false;
+        try {
+            const data = JSON.parse(script.textContent);
+            const info = data.props.initialProps.pageProps.initialAlgoliaState.results;
+            if (data.query.countryCode !== 'cn' ||
+                data.query.route.join('/') !== arguments[0] ||
+                info.page !== arguments[1]) return false;
+            const cards = Array.from(document.querySelectorAll(arguments[2]));
+            if (cards.length !== info.hits.length) return false;
+            if (!cards.length) return info.nbHits === 0;
+            if (info.hits.some(hit => typeof hit.sale_percentage !== 'string')) return false;
+            const targetCount = info.hits.filter(hit => ['60%', '65%', '70%'].includes(hit.sale_percentage)).length;
+            const targetCards = cards.filter(card => /(?:70|65|60)% off/.test(card.textContent));
+            if (targetCards.length !== targetCount) return false;
+            return cards.every(card => {
+                const name = card.querySelector('[data-test-id="ProductCard__PlpName"]');
+                if (!name || !name.textContent.trim() || !card.textContent.includes('CN¥')) return false;
+                if (!/(?:70|65|60)% off/.test(card.textContent)) return true;
+                const fullPrice = card.querySelector('[data-test-id="ProductCard__ProductFullPrice"]');
+                const finalPrice = card.querySelector('[data-test-id="ProductCard__ProductFinalPrice"]');
+                if (!fullPrice || !finalPrice || !fullPrice.textContent.includes('CN¥') ||
+                    !finalPrice.textContent.includes('CN¥')) return false;
+                const img = card.querySelector('img');
+                if (!img) return false;
+                const sources = [img.getAttribute('src'), img.getAttribute('data-src'),
+                    (img.getAttribute('srcset') || '').trim().split(/\s+/)[0]];
+                return sources.some(src => /^https?:\/\//.test(src || ''));
+            });
+        } catch (_) {
+            return false;
+        }
+    """, BASE_URLS[product_type].split('/cn/', 1)[1], page_num - 1, PRODUCT_CARD_SELECTOR)
+
+
+def get_page_soup(page_num, driver, product_type='men'):
+    """Load a complete product page, with one bounded retry."""
+    url = f"{BASE_URLS[product_type]}?page={page_num}"
+    for attempt in range(1, PAGE_ATTEMPTS + 1):
+        started = time.perf_counter()
+        try:
+            driver.get(url)
+            loaded = time.perf_counter()
+            WebDriverWait(driver, 15, poll_frequency=0.25).until(
+                lambda current: page_is_ready(current, product_type, page_num)
+            )
+            ready = time.perf_counter()
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            get_page_info(soup, product_type, page_num)
+            print(f"[{product_type}] page {page_num}: load={loaded - started:.2f}s "
+                  f"wait={ready - loaded:.2f}s parse={time.perf_counter() - ready:.2f}s", flush=True)
+            return soup
+        except Exception as e:
+            print(f"[{product_type}] page {page_num} attempt {attempt}/{PAGE_ATTEMPTS} failed: "
+                  f"{type(e).__name__}: {e}", flush=True)
+            if attempt == PAGE_ATTEMPTS:
+                raise RuntimeError(f'[{product_type}] Page {page_num} failed after retries') from e
+            time.sleep(PAGE_INTERVAL)
+
 
 def extract_products(soup, product_type='men'):
     """提取所有 70% 和 60% 65% off 的产品信息"""
     products = []
-    discount_spans = soup.find_all(string=re.compile(r'70% off|60% off|65% off'))
+    cards = soup.select(PRODUCT_CARD_SELECTOR)
+    discount_spans = [text for card in cards
+                      for text in card.find_all(string=re.compile(r'70% off|60% off|65% off'))]
     
     if not discount_spans:
         return []
@@ -154,25 +196,14 @@ def extract_products(soup, product_type='men'):
             full_url = f"https://www.endclothing.com{href}" if href.startswith('/') else href
             content = link.get_text(strip=True)
             
-            # Extract Image - Improved logic
+            # Choose a real URL; placeholders may coexist with lazy-load URLs.
             img_tag = link.find('img')
             img_url = ""
             if img_tag:
-                # 优先使用 src 属性
-                if img_tag.get('src'):
-                    img_url = img_tag.get('src')
-                # 如果没有 src，尝试从 srcset 提取
-                elif img_tag.get('srcset'):
-                    # srcset 格式: "url1 64w, url2 480w, url3 1600w"
-                    # 提取第一个URL（移除宽度描述符）
-                    srcset_parts = img_tag.get('srcset').split(',')
-                    if srcset_parts:
-                        # 取第一个srcset项，移除宽度描述符
-                        first_src = srcset_parts[0].strip().split(' ')[0]
-                        img_url = first_src
-                # 如果仍然没有，尝试data-src（懒加载）
-                elif img_tag.get('data-src'):
-                    img_url = img_tag.get('data-src')
+                srcset_parts = (img_tag.get('srcset') or '').strip().split()
+                sources = [img_tag.get('src'), img_tag.get('data-src'),
+                           srcset_parts[0].rstrip(',') if srcset_parts else None]
+                img_url = next((src for src in sources if src and src.startswith(('http://', 'https://'))), '')
             
             match = re.search(r'(.*)(CN¥[\d,]+)(CN¥[\d,]+)((?:70%|65%|60%) off)$', content)
             if match:
@@ -212,103 +243,90 @@ def extract_products(soup, product_type='men'):
                 })
     return products
 
-def main():
-    print("Loading existing data...")
-    all_products_dict = load_existing_data()
-    initial_count = len(all_products_dict)
-    print(f"Loaded {initial_count} existing products.")
-    
-    # 创建共享的Selenium driver
-    print("Initializing Selenium WebDriver...")
-    options = create_chrome_options()
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    
+def scrape_type(product_type, driver_path):
+    """Each worker owns its browser and keeps all results in memory."""
+    started = time.perf_counter()
+    driver = None
     try:
-        for product_type in BASE_URLS:
-            current_run_keys = set()
-            soup = get_page_soup(1, driver, product_type)
-            if not soup:
-                print(f"Failed to load {product_type} first page. Keeping existing data.")
-                continue
-
-            total_pages = get_total_pages(soup)
-            if not total_pages:
-                print("Could not determine total pages automatically. Defaulting to 100.")
-                total_pages = 100
-
-            print("Processing page 1...")
-            products = extract_products(soup, product_type)
-            print(f"Found {len(products)} items on page 1.")
-        
-            for p in products:
-                key = (product_type, p['url'])
-                current_run_keys.add(key)
-                all_products_dict[key] = p
-
-            for page in range(2, total_pages + 1):
+        driver = webdriver.Chrome(service=Service(driver_path), options=create_chrome_options())
+        driver.set_page_load_timeout(30)
+        soup = get_page_soup(1, driver, product_type)
+        info = get_page_info(soup, product_type, 1)
+        total_pages = info['nbPages']
+        print(f"[{product_type}] products={info['nbHits']} page_size={info['hitsPerPage']} "
+              f"pages={total_pages}", flush=True)
+        products_dict = {}
+        for page in range(1, total_pages + 1):
+            if page > 1:
+                time.sleep(PAGE_INTERVAL)
                 soup = get_page_soup(page, driver, product_type)
-                if not soup:
-                    continue
-            
-                products = extract_products(soup, product_type)
-                print(f"Found {len(products)} items on page {page}. Total unique items so far: {len(all_products_dict)}")
-            
-                for p in products:
-                    key = (product_type, p['url'])
-                    current_run_keys.add(key)
-                    all_products_dict[key] = p
-            
-                if len(products) > 0 or page % 5 == 0:
-                    save_data(all_products_dict)
-                    print(f"Progress saved.")
+                info = get_page_info(soup, product_type, page)
+            products = extract_products(soup, product_type)
+            expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
+            if len(products) != expected_targets:
+                raise ValueError(f'[{product_type}] Incomplete discount extraction on page {page}')
+            if any('original_price' not in p or 'discounted_price' not in p or not p.get('image_url')
+                   for p in products):
+                raise ValueError(f'[{product_type}] Incomplete product data on page {page}')
+            for product in products:
+                products_dict[(product_type, product['url'])] = product
+            print(f"[{product_type}] page {page}/{total_pages}: matched={len(products)} "
+                  f"collected={len(products_dict)}", flush=True)
+        print(f"[{product_type}] complete: products={len(products_dict)} "
+              f"elapsed={time.perf_counter() - started:.2f}s", flush=True)
+        return products_dict
+    finally:
+        if driver is not None:
+            driver.quit()
 
-                time.sleep(1)
 
-            # Only prune old data for the current type
-            print(f"{product_type} scraping complete. Cleaning up old data...")
-            keys_to_remove = [
-                key for key in all_products_dict
-                if key[0] == product_type and key not in current_run_keys
-            ]
-            for key in keys_to_remove:
-                del all_products_dict[key]
-        
-            print(f"Removed {len(keys_to_remove)} old items. Final count: {len(all_products_dict)}")
-            save_data(all_products_dict)
-            print(f"Final save to {OUTPUT_FILE} and {DATA_JS_FILE}")
+def main():
+    started = time.perf_counter()
+    try:
+        existing = load_existing_data()
+        initial_count = len(existing)
+        print(f"Loaded {initial_count} existing products.", flush=True)
+        # Install once before starting workers to avoid concurrent cache writes.
+        driver_path = ChromeDriverManager().install()
+        results = {}
+        failed_types = []
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = {executor.submit(scrape_type, product_type, driver_path): product_type
+                       for product_type in BASE_URLS}
+            for future in as_completed(futures):
+                product_type = futures[future]
+                try:
+                    results[product_type] = future.result()
+                except Exception as e:
+                    failed_types.append(product_type)
+                    print(f"[{product_type}] FAILED: {e}", flush=True)
+        if failed_types:
+            print(f"Incomplete scrape ({', '.join(failed_types)}). Existing files retained; "
+                  "publication blocked.", flush=True)
+            return 1
 
-        # Calculate stats for notification
+        # Keep output order deterministic regardless of which worker finishes first.
+        all_products_dict = {}
+        for product_type in BASE_URLS:
+            all_products_dict.update(results[product_type])
+        save_data(all_products_dict)
         final_count = len(all_products_dict)
         diff = final_count - initial_count
-        
-        if diff > 0:
-            change_desc = f"增加 {diff}"
-        elif diff < 0:
-            change_desc = f"减少 {abs(diff)}"
-        else:
-            change_desc = "无变化"
-            
-        # Write to GITHUB_ENV if running in GitHub Actions
+        change_desc = f"增加 {diff}" if diff > 0 else f"减少 {abs(diff)}" if diff < 0 else "无变化"
         env_file = os.getenv('GITHUB_ENV')
         if env_file:
-            try:
-                with open(env_file, "a", encoding='utf-8') as f:
-                    f.write(f"PRODUCT_COUNT={final_count}\n")
-                    f.write(f"PRODUCT_CHANGE_DESC={change_desc}\n")
-                print(f"Written stats to GITHUB_ENV: Count={final_count}, Change={change_desc}")
-            except Exception as e:
-                print(f"Error writing to GITHUB_ENV: {e}")
-
+            with open(env_file, 'a', encoding='utf-8') as f:
+                f.write(f"PRODUCT_COUNT={final_count}\n")
+                f.write(f"PRODUCT_CHANGE_DESC={change_desc}\n")
+        print(f"Complete: products={final_count} elapsed={time.perf_counter() - started:.2f}s", flush=True)
+        return 0
     except KeyboardInterrupt:
-        print("Scraping interrupted by user. Saving current progress...")
-        save_data(all_products_dict)
+        print('Interrupted. No partial scrape will be published.', flush=True)
+        return 1
     except Exception as e:
-        print(f"An error occurred: {e}. Saving current progress...")
-        save_data(all_products_dict)
-    finally:
-        if driver:
-            driver.quit()
-            print("WebDriver closed.")
+        print(f'Scrape failed: {type(e).__name__}: {e}', flush=True)
+        return 1
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    sys.exit(main())
