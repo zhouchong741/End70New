@@ -257,35 +257,53 @@ def extract_products(cards, product_type='men'):
     return products
 
 def scrape_type(product_type, driver_path):
-    """Each worker owns its browser and keeps all results in memory."""
+    """Return valid products and skipped pages without aborting on a page failure."""
     started = time.perf_counter()
     driver = None
+    products_dict = {}
+    skipped_pages = []
     try:
         driver = webdriver.Chrome(service=Service(driver_path), options=create_chrome_options())
         driver.set_page_load_timeout(30)
-        cards, info = get_page_data(1, driver, product_type)
+        # Page 2 can supply pagination if page 1 fails after its retries.
+        for first_page in (1, 2):
+            try:
+                if first_page > 1:
+                    time.sleep(PAGE_INTERVAL)
+                cards, info = get_page_data(first_page, driver, product_type)
+                break
+            except Exception as e:
+                skipped_pages.append(first_page)
+                print(f"[{product_type}] SKIP page {first_page}: {type(e).__name__}: {e}", flush=True)
+        else:
+            print(f"[{product_type}] Cannot determine total pages; retaining existing products.", flush=True)
+            return products_dict, skipped_pages
         total_pages = info['nbPages']
         print(f"[{product_type}] products={info['nbHits']} page_size={info['hitsPerPage']} "
               f"pages={total_pages}", flush=True)
-        products_dict = {}
-        for page in range(1, total_pages + 1):
-            if page > 1:
-                time.sleep(PAGE_INTERVAL)
-                cards, info = get_page_data(page, driver, product_type)
-            products = extract_products(cards, product_type)
-            expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
-            if len(products) != expected_targets:
-                raise ValueError(f'[{product_type}] Incomplete discount extraction on page {page}')
-            if any('original_price' not in p or 'discounted_price' not in p or not p.get('image_url')
-                   for p in products):
-                raise ValueError(f'[{product_type}] Incomplete product data on page {page}')
-            for product in products:
-                products_dict[(product_type, product['url'])] = product
+        for page in range(first_page, total_pages + 1):
+            try:
+                if page > first_page:
+                    time.sleep(PAGE_INTERVAL)
+                    cards, info = get_page_data(page, driver, product_type)
+                products = extract_products(cards, product_type)
+                expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
+                if len(products) != expected_targets:
+                    raise ValueError(f'[{product_type}] Incomplete discount extraction on page {page}')
+                if any('original_price' not in p or 'discounted_price' not in p or not p.get('image_url')
+                       for p in products):
+                    raise ValueError(f'[{product_type}] Incomplete product data on page {page}')
+                products_dict.update({(product_type, product['url']): product for product in products})
+            except Exception as e:
+                skipped_pages.append(page)
+                print(f"[{product_type}] SKIP page {page}/{total_pages}: {type(e).__name__}: {e}", flush=True)
+                continue
             print(f"[{product_type}] page {page}/{total_pages}: matched={len(products)} "
                   f"collected={len(products_dict)}", flush=True)
-        print(f"[{product_type}] complete: products={len(products_dict)} "
+        status = 'partial' if skipped_pages else 'complete'
+        print(f"[{product_type}] {status}: products={len(products_dict)} skipped_pages={skipped_pages} "
               f"elapsed={time.perf_counter() - started:.2f}s", flush=True)
-        return products_dict
+        return products_dict, skipped_pages
     finally:
         if driver is not None:
             driver.quit()
@@ -306,13 +324,23 @@ def main():
         driver_path = ChromeDriverManager().install()
         results = {}
         failed_types = []
+        skipped_by_type = {}
         with ThreadPoolExecutor(max_workers=2) as executor:
             futures = {executor.submit(scrape_type, product_type, driver_path): product_type
                        for product_type in BASE_URLS}
             for future in as_completed(futures):
                 product_type = futures[future]
                 try:
-                    results[product_type] = future.result()
+                    products, skipped_pages = future.result()
+                    if skipped_pages:
+                        skipped_by_type[product_type] = skipped_pages
+                        # Without page ownership, retain this type's old products to avoid false removals.
+                        retained = {key: item for key, item in existing.items() if key[0] == product_type}
+                        retained.update(products)
+                        products = retained
+                        print(f"[{product_type}] WARNING: skipped pages {skipped_pages}; "
+                              "merging valid pages with existing products.", flush=True)
+                    results[product_type] = products
                 except Exception as e:
                     failed_types.append(product_type)
                     print(f"[{product_type}] FAILED: {e}", flush=True)
@@ -350,7 +378,9 @@ def main():
                 f.write(f"MEN_CHANGE_DESC={change_descs['men']}\n")
                 f.write(f"WOMEN_PRODUCT_COUNT={final_counts['women']}\n")
                 f.write(f"WOMEN_CHANGE_DESC={change_descs['women']}\n")
-        print(f"Complete: products={final_count} elapsed={time.perf_counter() - started:.2f}s", flush=True)
+        status = 'Published with skipped pages' if skipped_by_type else 'Complete'
+        print(f"{status}: products={final_count} skipped_pages={skipped_by_type} "
+              f"elapsed={time.perf_counter() - started:.2f}s", flush=True)
         return 0
     except KeyboardInterrupt:
         print('Interrupted. No partial scrape will be published.', flush=True)

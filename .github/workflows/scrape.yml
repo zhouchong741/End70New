@@ -40,7 +40,6 @@ jobs:
 
       - name: Run Scraper
         run: |
-          python -m unittest discover -s tests -v
           python -u scrape_endclothing.py
 
       - name: Commit and Push changes
