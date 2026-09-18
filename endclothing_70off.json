@@ -1783,15 +1783,6 @@
   },
   {
     "type": "men",
-    "name": "Jil Sander Short Sleeve Boxy Fit ShirtKakhi",
-    "original_price": 6719,
-    "discounted_price": 2688,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/jil-sander-short-sleeve-boxy-fit-shirt-j21dl0264-j45338-251.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/N/S/NS_J21DL0264-J45338-251_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Dime GPS T-ShirtBlack",
     "original_price": 439,
     "discounted_price": 144,
@@ -1816,6 +1807,15 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/dime-gps-t-shirt-dimesu2555-wht.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/3/0/30-06-2025-BLR_DIMESU2555-WHT_1_1.jpg"
+  },
+  {
+    "type": "men",
+    "name": "Jil Sander Short Sleeve Boxy Fit ShirtKakhi",
+    "original_price": 6719,
+    "discounted_price": 2688,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/jil-sander-short-sleeve-boxy-fit-shirt-j21dl0264-j45338-251.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/N/S/NS_J21DL0264-J45338-251_1_1.jpg"
   },
   {
     "type": "men",
@@ -2248,15 +2248,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/dime-classic-lightbright-t-shirt-dime2sp2548blk.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-25-LS_DIME2SP2548BLK_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "AKILA Jupiter SunglassesBlack",
-    "original_price": 1265,
-    "discounted_price": 380,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/akila-jupiter-sunglasses-2403-01-01.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/4/04-04-2025_JD_2403-01-01_m1_1.jpg"
   },
   {
     "type": "men",
@@ -3904,15 +3895,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/ganni-stretch-shell-wrap-mini-skirt-w0859-99.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/6/06-03-2025_JD_W0859-99_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "AKILA Jupiter SunglassesBlack",
-    "original_price": 1265,
-    "discounted_price": 380,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/akila-jupiter-sunglasses-2403-01-01.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/4/04-04-2025_JD_2403-01-01_m1_1.jpg"
   },
   {
     "type": "women",
