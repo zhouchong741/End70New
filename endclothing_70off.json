@@ -496,15 +496,6 @@
   },
   {
     "type": "men",
-    "name": "Y-3 Gazelle SneakerWhite",
-    "original_price": 1909,
-    "discounted_price": 764,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/y-3-gazelle-sneaker-kj9189.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KJ9189_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Nike T90 Shox Magia Qs SneakerPecan, Silver & Brown",
     "original_price": 1075,
     "discounted_price": 430,
@@ -1864,6 +1855,15 @@
   },
   {
     "type": "men",
+    "name": "Carhartt WIP Duke JacketWall & Wax",
+    "original_price": 1425,
+    "discounted_price": 570,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/carhartt-wip-duke-jacket-i034516-0qsxx.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/6/06-05-25_I034516-0QSXX_1_1.jpg"
+  },
+  {
+    "type": "men",
     "name": "Carhartt WIP Hartt Chain T-ShirtWhite",
     "original_price": 390,
     "discounted_price": 156,
@@ -2557,15 +2557,6 @@
   },
   {
     "type": "women",
-    "name": "Adidas Taekwondo Mei Ballet SneakersFtwr White, Better Scarlet & Gum",
-    "original_price": 639,
-    "discounted_price": 256,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/adidas-taekwondo-mei-ballet-sneakers-jq0960.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/1/11-11-2025-JW_JQ0960_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "SKIMS Fleece Lounge Cargo PantsEcru",
     "original_price": 1109,
     "discounted_price": 444,
@@ -2728,21 +2719,21 @@
   },
   {
     "type": "women",
-    "name": "Y-3 Track JacketBlack",
-    "original_price": 1909,
-    "discounted_price": 764,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Anine Bing Kam Sweat ShortsLight Blue",
     "original_price": 1350,
     "discounted_price": 540,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/anine-bing-kam-sweat-shorts-a-05-12104-bel41.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_A-05-12104-BEL41_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Y-3 Track JacketBlack",
+    "original_price": 1909,
+    "discounted_price": 764,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
   },
   {
     "type": "women",
@@ -2755,21 +2746,21 @@
   },
   {
     "type": "women",
-    "name": "Fear of God ESSENTIALS Fitted Rib TankOatmeal Heather",
-    "original_price": 519,
-    "discounted_price": 208,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/fear-of-god-essentials-fitted-rib-tank-125sp267063fw.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/3/0/30-03-26_125SP267063FW_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "House of Sunny Take A Trip Mini Racer JacketSky Blue",
     "original_price": 1155,
     "discounted_price": 462,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/house-of-sunny-take-a-trip-mini-racer-jacket-vol2334.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_VOL2334_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Fear of God ESSENTIALS Fitted Rib TankOatmeal Heather",
+    "original_price": 519,
+    "discounted_price": 208,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/fear-of-god-essentials-fitted-rib-tank-125sp267063fw.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/3/0/30-03-26_125SP267063FW_1_1.jpg"
   },
   {
     "type": "women",
@@ -2791,21 +2782,21 @@
   },
   {
     "type": "women",
-    "name": "New BrandYESEYESEE Hooded Knit Zip UpYellow",
-    "original_price": 1185,
-    "discounted_price": 474,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/yeseyesee-hooded-knit-zip-up-ys261kknjk01yel.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_YS261KKNJK01YEL_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Comme des Garçons Wallet SA2100DP Denim Pocket WalletBlue Denim",
     "original_price": 2459,
     "discounted_price": 984,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/comme-des-garcons-wallet-sa2100dp-denim-pocket-wallet-sa2100dp-1.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/2/22-12-2025-JW_SA2100DP-1_m1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "New BrandYESEYESEE Hooded Knit Zip UpYellow",
+    "original_price": 1185,
+    "discounted_price": 474,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/yeseyesee-hooded-knit-zip-up-ys261kknjk01yel.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_YS261KKNJK01YEL_1_1.jpg"
   },
   {
     "type": "women",
