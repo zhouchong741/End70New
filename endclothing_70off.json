@@ -595,15 +595,6 @@
   },
   {
     "type": "men",
-    "name": "Nike Shox Ride 2 SneakerPencil Point & Black",
-    "original_price": 1315,
-    "discounted_price": 395,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/nike-shox-ride-2-sneaker-io4296-003.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_IO4296-003_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Nike Air Force 1 Low Retro Prm Qs SneakerSilver Lilac & Taupe",
     "original_price": 1035,
     "discounted_price": 414,
@@ -1087,15 +1078,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/carter-young-plaid-business-shirt-cyfw2525.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/0/10-09-2025-JW_CYFW2525_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "Butter Goods Witness T-ShirtArmy",
-    "original_price": 359,
-    "discounted_price": 144,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/butter-goods-witness-t-shirt-bg253104-arm.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/8/08-09-2025_JD_BG253104-ARM_1_1.jpg"
   },
   {
     "type": "men",
@@ -1882,6 +1864,15 @@
   },
   {
     "type": "men",
+    "name": "Pop Trading Company DRS Denim ShortsBlack Denim",
+    "original_price": 789,
+    "discounted_price": 237,
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/cn/pop-trading-company-drs-denim-shorts-popss25-04-006.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/4/14-03-25-TC_POPSS25-04-006_1_1.jpg"
+  },
+  {
+    "type": "men",
     "name": "Columbia Explorers Canyon™ Back T-ShirtDark Stone",
     "original_price": 519,
     "discounted_price": 208,
@@ -2188,15 +2179,6 @@
   },
   {
     "type": "women",
-    "name": "Adidas Gazelle Lo Pro Leopard SneakersMagic Beige, Ivory & Gum",
-    "original_price": 795,
-    "discounted_price": 239,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/adidas-gazelle-lo-pro-leopard-sneakers-ki4207.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/6/06-01-26_KI4207_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "adidas SL 72 PT sneakerBold Gold, Bright Royal & Team Royal Blue",
     "original_price": 795,
     "discounted_price": 278,
@@ -2248,15 +2230,6 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/cn/adidas-climacool-1-og-if6850.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_IF6850_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "Adidas SL 72 OG SneakersAurora Coffee, Icey Blue & Off White",
-    "original_price": 679,
-    "discounted_price": 204,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/adidas-sl-72-og-sneakers-ih4521.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_IH4521_1_1.jpg"
   },
   {
     "type": "women",
@@ -2512,21 +2485,21 @@
   },
   {
     "type": "women",
-    "name": "Y-3 Track JacketBlack",
-    "original_price": 1909,
-    "discounted_price": 764,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Levi's Ribcage Wide Leg H223 JeansChipped Winter Twig",
     "original_price": 795,
     "discounted_price": 318,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/levis-ribcage-wide-leg-h223-jeans-a6081-0075.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_A6081-0075_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Y-3 Track JacketBlack",
+    "original_price": 1909,
+    "discounted_price": 764,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
   },
   {
     "type": "women",
@@ -2764,21 +2737,21 @@
   },
   {
     "type": "women",
-    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
-    "original_price": 1395,
-    "discounted_price": 558,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Faithfull The Brand En Vau Stripe ShirtBurgundy Stripe",
     "original_price": 1585,
     "discounted_price": 634,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/faithfull-the-brand-en-vau-stripe-shirt-ff3431-bgs.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_FF3431-BGS_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
+    "original_price": 1395,
+    "discounted_price": 558,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
   },
   {
     "type": "women",
