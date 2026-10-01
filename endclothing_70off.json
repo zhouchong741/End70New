@@ -73,15 +73,6 @@
   },
   {
     "type": "men",
-    "name": "Comme des Garçons SHIRT Lavenham GiletBeige",
-    "original_price": 4415,
-    "discounted_price": 1766,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/comme-des-garcons-shirt-lavenham-gilet-fq-jj523-051-3.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_FQ-JJ523-051-3_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "NN07 Gregor Drawstring ShortsBlack",
     "original_price": 789,
     "discounted_price": 592,
@@ -298,15 +289,6 @@
   },
   {
     "type": "men",
-    "name": "Bass Weejuns x POP Traders Lincoln Easy Weejun LoaferChocolate Leather",
-    "original_price": 1555,
-    "discounted_price": 622,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/bass-weejuns-x-pop-traders-lincoln-easy-weejun-loafer-ba91775-0ch.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/7/27-02-26_BA91775-0CH_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "New BrandTGB Birds of Bwindi HoodieBlack",
     "original_price": 869,
     "discounted_price": 348,
@@ -361,15 +343,6 @@
   },
   {
     "type": "men",
-    "name": "Honor the Gift Where You From T-ShirtBlack",
-    "original_price": 519,
-    "discounted_price": 182,
-    "discount": "65% off",
-    "url": "https://www.endclothing.com/cn/honor-the-gift-where-you-from-t-shirt-htg260142-blk.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_HTG260142-BLK_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Honor the Gift Ambitions T-ShirtWhite",
     "original_price": 519,
     "discounted_price": 182,
@@ -379,21 +352,12 @@
   },
   {
     "type": "men",
-    "name": "Honor the Gift Like That T-ShirtWhite",
+    "name": "Honor the Gift Where You From T-ShirtBlack",
     "original_price": 519,
     "discounted_price": 182,
     "discount": "65% off",
-    "url": "https://www.endclothing.com/cn/honor-the-gift-like-that-t-shirt-htg260194-wht.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_HTG260194-WHT_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "Honor the Gift We All Grow T-ShirtWhite",
-    "original_price": 519,
-    "discounted_price": 156,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/honor-the-gift-we-all-grow-t-shirt-htg260195-wht.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_HTG260195-WHT_1_1.jpg"
+    "url": "https://www.endclothing.com/cn/honor-the-gift-where-you-from-t-shirt-htg260142-blk.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_HTG260142-BLK_1_1.jpg"
   },
   {
     "type": "men",
@@ -1186,15 +1150,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/brams-fruit-garden-hose-chain-stitch-zip-hoodie-966-olv.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/7/27-08-25_966-olv_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "Bram's Fruit Garden Hose Chain Stitch Zip HoodieSolid Charcoal",
-    "original_price": 1425,
-    "discounted_price": 570,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/brams-fruit-garden-hose-chain-stitch-zip-hoodie-965-cha.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/7/27-08-2025-JW_965-CHA_1_1.jpg"
   },
   {
     "type": "men",
@@ -2548,15 +2503,6 @@
   },
   {
     "type": "women",
-    "name": "Fear of God ESSENTIALS Campus 90'S Crop Raglan HoodieFaded Mauve",
-    "original_price": 1475,
-    "discounted_price": 590,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/fear-of-god-essentials-campus-90s-crop-raglan-hoodie-192sp267352fw.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/6/26-03-26-ns_192sp267352fw_m1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Rick Owens x Moncler Geocamo Cropped Leather JacketDark Dust",
     "original_price": 26755,
     "discounted_price": 10702,
@@ -2566,21 +2512,21 @@
   },
   {
     "type": "women",
+    "name": "Fear of God ESSENTIALS Campus 90'S Crop Raglan HoodieFaded Mauve",
+    "original_price": 1475,
+    "discounted_price": 590,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/fear-of-god-essentials-campus-90s-crop-raglan-hoodie-192sp267352fw.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/6/26-03-26-ns_192sp267352fw_m1.jpg"
+  },
+  {
+    "type": "women",
     "name": "House of Sunny Take A Trip Mini Racer JacketSky Blue",
     "original_price": 1155,
     "discounted_price": 462,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/house-of-sunny-take-a-trip-mini-racer-jacket-vol2334.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_VOL2334_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "Y-3 Track JacketBlack",
-    "original_price": 1909,
-    "discounted_price": 764,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
   },
   {
     "type": "women",
@@ -2599,6 +2545,15 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/levis-ribcage-wide-leg-h223-jeans-a6081-0075.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_A6081-0075_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Y-3 Track JacketBlack",
+    "original_price": 1909,
+    "discounted_price": 764,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/y-3-track-jacket-kh3047.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_KH3047_1_1.jpg"
   },
   {
     "type": "women",
