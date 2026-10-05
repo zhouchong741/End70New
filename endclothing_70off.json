@@ -793,15 +793,6 @@
   },
   {
     "type": "men",
-    "name": "Universal Works Fine Cord Fatigue OvershirtBlack",
-    "original_price": 1185,
-    "discounted_price": 474,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/universal-works-fine-cord-fatigue-overshirt-p33049-blk.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_P33049-BLK_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "adidas OG LA Shield PantOff White",
     "original_price": 1435,
     "discounted_price": 574,
@@ -2422,21 +2413,21 @@
   },
   {
     "type": "women",
-    "name": "Nike Swift High Support Sports BraTattoo & Silver",
-    "original_price": 479,
-    "discounted_price": 192,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/nike-swift-high-support-sports-bra-hm5220-502.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/b/r/br_hm5220-502_m1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Nike Shox Ride 2 SneakerNoir, Silver & Khaki",
     "original_price": 1435,
     "discounted_price": 574,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/nike-shox-ride-2-sneaker-io1906-045.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/3/13-11-25_TC_IO1906-045_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Nike Swift High Support Sports BraTattoo & Silver",
+    "original_price": 479,
+    "discounted_price": 192,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/nike-swift-high-support-sports-bra-hm5220-502.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/b/r/br_hm5220-502_m1.jpg"
   },
   {
     "type": "women",
