@@ -478,15 +478,6 @@
   },
   {
     "type": "men",
-    "name": "New Balance Abzorb 2000 SneakerBlack Metallic & Black Metallic",
-    "original_price": 1355,
-    "discounted_price": 407,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/new-balance-abzorb-2000-sneaker-u200078c.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/2/12-01-2026-JW_U200078C_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Jil Sander Zip Short Sleeve PoloFlame",
     "original_price": 4695,
     "discounted_price": 1878,
@@ -655,15 +646,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/asics-gel-quantum-360-i-amp-1203a731-002.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/4/04-12-25_1203A731-002_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "Asics Gel-Ds 14 SneakersOxblood & Black",
-    "original_price": 915,
-    "discounted_price": 366,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/asics-gel-ds-14-sneakers-1203a607-600.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/4/04-12-25_1203A607-600_1_1.jpg"
   },
   {
     "type": "men",
@@ -1540,15 +1522,6 @@
   },
   {
     "type": "men",
-    "name": "Nike Ld-1000 SneakerBrown, White & Sail",
-    "original_price": 795,
-    "discounted_price": 239,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/nike-ld-1000-sneaker-ib8868-222.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/7/07-05-2025-BLR_IB8868-222_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Carhartt WIP Hartt Chain T-ShirtWhite",
     "original_price": 390,
     "discounted_price": 156,
@@ -2224,15 +2197,6 @@
   },
   {
     "type": "women",
-    "name": "SKIMS Boyfriend T-ShirtOnyx",
-    "original_price": 390,
-    "discounted_price": 117,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/skims-boyfriend-t-shirt-onyx-ap-tsh-0462-onx.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/7/07-07-2025_ap-tsh-0462_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "adidas x Willy Chavarria Jabbar Low SneakerOff White, Core Black & Warm Vanilla",
     "original_price": 1115,
     "discounted_price": 335,
@@ -2386,15 +2350,6 @@
   },
   {
     "type": "women",
-    "name": "MM6 Maison Margiela Midi SkirtPink",
-    "original_price": 3160,
-    "discounted_price": 1264,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/mm6-maison-margiela-midi-skirt-s62me0029-m35883-244.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_S62ME0029-M35883-244_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "RIXO Rosamarie DressStone Blue",
     "original_price": 2349,
     "discounted_price": 940,
@@ -2422,21 +2377,21 @@
   },
   {
     "type": "women",
+    "name": "MM6 Maison Margiela Midi SkirtPink",
+    "original_price": 3160,
+    "discounted_price": 1264,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/mm6-maison-margiela-midi-skirt-s62me0029-m35883-244.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_S62ME0029-M35883-244_1_1.jpg"
+  },
+  {
+    "type": "women",
     "name": "Nike Rejuven8 Run OG QS SneakerMetallic Silver, Black & Voltage Green",
     "original_price": 949,
     "discounted_price": 380,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/nike-rejuven8-run-og-qs-sneaker-if5958-003.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/7/27-11-25_IF5958-003_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "Asics Gel-Ds 14 SneakersOxblood & Black",
-    "original_price": 915,
-    "discounted_price": 366,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/asics-gel-ds-14-sneakers-1203a607-600.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/4/04-12-25_1203A607-600_1_1.jpg"
   },
   {
     "type": "women",
