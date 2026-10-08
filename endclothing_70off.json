@@ -2422,15 +2422,6 @@
   },
   {
     "type": "women",
-    "name": "Marine Serre Athleisure Yoga LeggingDeep Mahogany",
-    "original_price": 2619,
-    "discounted_price": 1048,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/marine-serre-athleisure-yoga-legging-wpa189acjer0101-br51.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_WPA189ACJER0101-BR51_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Nike Air Force 1 '07 Bwn SneakerBrown, Sail & Brown",
     "original_price": 955,
     "discounted_price": 382,
@@ -2455,6 +2446,15 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/nike-t90-patent-w-sneaker-ib5666-300.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_IB5666-300_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Marine Serre Athleisure Yoga LeggingDeep Mahogany",
+    "original_price": 2619,
+    "discounted_price": 1048,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/marine-serre-athleisure-yoga-legging-wpa189acjer0101-br51.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_WPA189ACJER0101-BR51_1_1.jpg"
   },
   {
     "type": "women",
