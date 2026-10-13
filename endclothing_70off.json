@@ -748,15 +748,6 @@
   },
   {
     "type": "men",
-    "name": "15% OFFVans LX Old Skool sneakerShag Suede Bay Leaf",
-    "original_price": 759,
-    "discounted_price": 304,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/vans-lx-old-skool-sneaker-vn000d9jemf.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/3/03-10-2025-JC_VN000D9JEMF_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "15% OFFPercival Appendix Long Sleeve Knitted ShirtBlack & Brown",
     "original_price": 1185,
     "discounted_price": 356,
@@ -772,15 +763,6 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/cn/willy-chavarria-workwear-toluca-pant-wcbtm0061-000.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/3/0/30-09-2025-JW_WCBTM0061-000_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "15% OFFthisisneverthat Arch Logo HoodieBlack",
-    "original_price": 875,
-    "discounted_price": 350,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/thisisneverthat-arch-logo-hoodie-tn253tswho04-blk.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/5/25-09-2025-BLR_TN253TSWHO04-BLK_1_1.jpg"
   },
   {
     "type": "men",
@@ -1087,15 +1069,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/ymc-twisted-denim-short-p9ymc-40.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/3/03-06-2025_JD_P9YMC-40_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "15% OFFTekla Fabrics Bucket HatVerde",
-    "original_price": 519,
-    "discounted_price": 208,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/tekla-fabrics-bucket-hat-bkh-367.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/2/02-06-25_BKH-367_m1_1.jpg"
   },
   {
     "type": "men",
@@ -2251,15 +2224,6 @@
   },
   {
     "type": "women",
-    "name": "15% OFFVans LX Old Skool sneakerShag Suede Bay Leaf",
-    "original_price": 759,
-    "discounted_price": 304,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/vans-lx-old-skool-sneaker-vn000d9jemf.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/3/03-10-2025-JC_VN000D9JEMF_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "15% OFFGANNI Soft Rigid Denim Mini DressBlack Washed",
     "original_price": 3145,
     "discounted_price": 1258,
@@ -2359,15 +2323,6 @@
   },
   {
     "type": "women",
-    "name": "15% OFFSt. Agni Suede Utility Cocoon BomberToffee",
-    "original_price": 4845,
-    "discounted_price": 1938,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/st-agni-suede-utility-cocoon-bomber-w25-310tfe.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/8/18-07-2025-JC_W25-310TFE_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "15% OFFAMIRI Paradise PantMulti",
     "original_price": 8720,
     "discounted_price": 3488,
@@ -2446,15 +2401,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/peachy-den-dylan-halter-top-tdyl-bro136-0425.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/9/09-06-2025-JC_TDYL-BRO136-0425_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "15% OFFTekla Fabrics Bucket HatVerde",
-    "original_price": 519,
-    "discounted_price": 208,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/tekla-fabrics-bucket-hat-bkh-367.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/2/02-06-25_BKH-367_m1_1.jpg"
   },
   {
     "type": "women",
@@ -2806,6 +2752,15 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/cn/entire-studios-sleeveless-bodysuit-es2508wb.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/9/19-12-2024-JD_ES2508WB_m1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "15% OFFA.P.C. Label F SweatshirtHeathered Ecru",
+    "original_price": 1789,
+    "discounted_price": 537,
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/cn/apc-label-f-sweatshirt-cohcm-f27965.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/6/16-12-24-LS_COHCM-F27965_1_1.jpg"
   },
   {
     "type": "women",
