@@ -1558,15 +1558,6 @@
   },
   {
     "type": "men",
-    "name": "A.P.C. Minimal BraceletGold",
-    "original_price": 949,
-    "discounted_price": 380,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/apc-minimal-bracelet-meacc-m70683-raa.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/2/22-05-2025-BLR_MEACC-M70683-RAA_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Nike Swim Belted 5\" Volley ShortsBlack",
     "original_price": 390,
     "discounted_price": 156,
@@ -1879,6 +1870,15 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/puma-x-kidsuper-mcfc-home-jersey-replica-781068-07.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/1/11-06-2025_jd_781068-07_m1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Peachy Den Dylan Halter TopDaisy",
+    "original_price": 759,
+    "discounted_price": 304,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/peachy-den-dylan-halter-top-tdyl-bro136-0425.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/9/09-06-2025-JC_TDYL-BRO136-0425_1_1.jpg"
   },
   {
     "type": "women",
@@ -2197,21 +2197,21 @@
   },
   {
     "type": "women",
-    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
-    "original_price": 1395,
-    "discounted_price": 558,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "Faithfull The Brand En Vau Stripe ShirtBurgundy Stripe",
     "original_price": 1585,
     "discounted_price": 634,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/faithfull-the-brand-en-vau-stripe-shirt-ff3431-bgs.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_FF3431-BGS_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
+    "original_price": 1395,
+    "discounted_price": 558,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
   },
   {
     "type": "women",
@@ -2401,15 +2401,6 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/cn/faithfull-the-brand-syna-top-ff3875-cly.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/0/10-06-2025-NS_FF3875-CLY_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "Peachy Den Dylan Halter TopDaisy",
-    "original_price": 759,
-    "discounted_price": 304,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/peachy-den-dylan-halter-top-tdyl-bro136-0425.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/0/9/09-06-2025-JC_TDYL-BRO136-0425_1_1.jpg"
   },
   {
     "type": "women",
@@ -2824,15 +2815,6 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/cn/adanola-ultimate-asymmetric-double-strap-bralette-adbra-cbrown.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/5/25-06-2024-LB_ADBRA-CBROWN_1_1.jpg"
-  },
-  {
-    "type": "women",
-    "name": "SKIMS Cotton Fleece Pullover HoodieOnyx",
-    "original_price": 599,
-    "discounted_price": 240,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/skims-cotton-fleece-pullover-hoodie-tp-plo-4475-onx.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/7/17-05-2024-LB_TP-PLO-4475-ONX_1_1.jpg"
   },
   {
     "type": "women",
