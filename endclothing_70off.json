@@ -64,15 +64,6 @@
   },
   {
     "type": "men",
-    "name": "adidas Handball Spezial SneakerWonder Quartz, Olive Strata & Gum",
-    "original_price": 719,
-    "discounted_price": 288,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/adidas-handball-spezial-sneaker-kk1149.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/7/17-04-26_KK1149_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "NN07 Gregor Drawstring ShortsBlack",
     "original_price": 789,
     "discounted_price": 552,
@@ -1900,21 +1891,21 @@
   },
   {
     "type": "women",
-    "name": "Entire Studios Full SweatpantsGrey Marle",
-    "original_price": 1665,
-    "discounted_price": 666,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/entire-studios-full-sweatpants-esss26pa01012-6236.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_ESSS26PA01012-6236_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "ICECREAM Team IC Cropped Work JacketBeige",
     "original_price": 1475,
     "discounted_price": 590,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/icecream-team-ic-cropped-work-jacket-icww26103.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_ICWW26103_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Entire Studios Full SweatpantsGrey Marle",
+    "original_price": 1665,
+    "discounted_price": 666,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/entire-studios-full-sweatpants-esss26pa01012-6236.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_ESSS26PA01012-6236_1_1.jpg"
   },
   {
     "type": "women",
