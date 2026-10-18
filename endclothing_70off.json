@@ -280,15 +280,6 @@
   },
   {
     "type": "men",
-    "name": "New Balance 204L SneakerMushroom",
-    "original_price": 955,
-    "discounted_price": 382,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/new-balance-204l-sneaker-u204lmma.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/9/29-07-2025-NS_U204LMMA_1_1.jpg"
-  },
-  {
-    "type": "men",
     "name": "Folk Gabe ShirtIndigo Irregular Dot",
     "original_price": 1155,
     "discounted_price": 462,
@@ -538,15 +529,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/new-balance-1906-sneaker-u190646s.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/1/21-11-25_U190646S_1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "ICECREAM Mascot Denim PantsMid Wash Blue",
-    "original_price": 1275,
-    "discounted_price": 510,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/icecream-mascot-denim-pants-ic25452-mbu.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/B/R/BR_IC25452-MBU_1_1.jpg"
   },
   {
     "type": "men",
@@ -952,15 +934,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/nike-wool-classics-wool-sweatshirt-fv4883-540.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/6/26-06-2025-JW_FV4883-540_m1_1.jpg"
-  },
-  {
-    "type": "men",
-    "name": "adidas Brushed Woven Track PantCollegiate Green",
-    "original_price": 479,
-    "discounted_price": 144,
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/cn/adidas-brushed-woven-track-pant-jx3079.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/6/26-06-25_jx3055_1_1.jpg"
   },
   {
     "type": "men",
@@ -2161,21 +2134,21 @@
   },
   {
     "type": "women",
-    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
-    "original_price": 1395,
-    "discounted_price": 558,
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
-    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
-  },
-  {
-    "type": "women",
     "name": "adidas Adi365 Running CLIMAWARM Half-ZipBlack",
     "original_price": 679,
     "discounted_price": 272,
     "discount": "60% off",
     "url": "https://www.endclothing.com/cn/adidas-adi365-running-climawarm-half-zip-jp3842.html",
     "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/1/7/17-10-2025_JD_JP3842_1_1.jpg"
+  },
+  {
+    "type": "women",
+    "name": "Nike Air Max 95 Big Bubble SneakerWhite, Green & Blue",
+    "original_price": 1395,
+    "discounted_price": 558,
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/cn/nike-air-max-95-big-bubble-sneaker-ih7855-100.html",
+    "image_url": "https://media.endclothing.com/media/f_auto,q_auto:good,w_1600/prodmedia/media/catalog/product/2/3/23-04-2026-JW_IH7855-100_1_1.jpg"
   },
   {
     "type": "women",
