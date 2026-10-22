@@ -8,24 +8,32 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
-from urllib.parse import unquote, urlsplit, urlunsplit
+from email.utils import parsedate_to_datetime
+from threading import Lock
+from urllib.parse import unquote, urlencode, urljoin, urlsplit, urlunsplit
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 BASE_URLS = {
-    "men": "https://www.endclothing.com/cn/sale/all-sale",
-    "women": "https://www.endclothing.com/cn/women/sale/all-sale",
+    "men": "https://www.endclothing.com/en-cn/collections/mens-sale",
+    "women": "https://www.endclothing.com/en-cn/collections/womens-sale",
 }
 OUTPUT_FILE = "endclothing_70off.json"
 DATA_JS_FILE = "data.js"
-PRODUCT_CARD_SELECTOR = '#plpBody a[data-test-id="ProductCard__ProductCardSC"]'
+PRODUCT_CARD_SELECTOR = '[data-product-card-handle]'
+TARGET_DISCOUNTS = {"60% off", "65% off", "70% off"}
+HITS_PER_PAGE = 1000
+CARD_BATCH_SIZE = 20
 PAGE_ATTEMPTS = 2
 PAGE_INTERVAL = 1
+REQUEST_INTERVAL = 1
+REQUEST_LOCK = Lock()
+next_request_at = 0
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    'Accept': 'text/html,application/json'
 }
 
 def normalize_product_url(url):
@@ -65,248 +73,298 @@ def save_data(products_dict):
         f.write(f"window.products = {json_str};\n")
         f.write(f'window.updateTime = "{update_time}";')
 
-def create_chrome_options():
-    """创建Chrome选项，抑制不必要的警告和日志"""
-    options = Options()
-    options.page_load_strategy = 'eager'
-    options.add_argument('--headless=new')  # 使用新版headless模式
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--disable-software-rasterizer')
-    options.add_argument('--disable-webgl')
-    options.add_argument('--disable-webgl2')
-    options.add_argument('--log-level=3')  # 只显示严重错误
-    options.add_argument('--silent')
-    options.add_argument(f'user-agent={HEADERS["User-Agent"]}')
-    
-    # 抑制 DevTools 和其他日志
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    options.add_experimental_option('useAutomationExtension', False)
-    
-    return options
+class BrowserSession:
+    """Make storefront requests inside a normal Chrome JavaScript session."""
 
-def get_page_info(soup, product_type, page_num, cards=None):
-    """Read authoritative pagination and reject redirects or incomplete lists."""
-    try:
-        data = json.loads(soup.find('script', id='__NEXT_DATA__').string)
-        query = data['query']
-        expected_route = BASE_URLS[product_type].split('/cn/', 1)[1].split('/')
-        if query.get('countryCode') != 'cn' or query.get('route') != expected_route:
-            raise ValueError('Unexpected country or product type')
-        info = data['props']['initialProps']['pageProps']['initialAlgoliaState']['results']
-        for key in ('nbHits', 'nbPages', 'page', 'hitsPerPage'):
-            if type(info[key]) is not int or info[key] < 0:
-                raise ValueError(f'Invalid pagination field: {key}')
-        if info['page'] != page_num - 1 or info['hitsPerPage'] == 0:
-            raise ValueError('Unexpected page number or page size')
-        total_pages = math.ceil(info['nbHits'] / info['hitsPerPage'])
-        if info['nbPages'] != total_pages:
-            raise ValueError('Inconsistent total pages')
-        if (total_pages and page_num > total_pages) or (not total_pages and page_num != 1):
-            raise ValueError('Page outside the result set')
-        expected_count = min(info['hitsPerPage'], max(0, info['nbHits'] - info['page'] * info['hitsPerPage']))
-        if cards is None:
-            cards = soup.select(PRODUCT_CARD_SELECTOR)
-        if len(info['hits']) != expected_count or len(cards) != expected_count:
-            raise ValueError('Incomplete product list')
-        if any(not isinstance(hit.get('sale_percentage'), str) for hit in info['hits']):
-            raise ValueError('Missing product discount metadata')
-        expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
-        actual_targets = sum(bool(re.search(r'(?:70|65|60)% off', card.get_text()))
-                             for card in cards)
-        if actual_targets != expected_targets:
-            raise ValueError('Incomplete discount labels')
-        return info
-    except (AttributeError, KeyError, TypeError, ValueError) as e:
-        raise ValueError(f'[{product_type}] Invalid page {page_num}: {e}') from e
+    def __init__(self, driver_path):
+        options = Options()
+        options.page_load_strategy = 'eager'
+        options.add_argument('--headless=new')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        self.driver = webdriver.Chrome(service=Service(driver_path), options=options)
+        self.driver.set_page_load_timeout(30)
+        self.driver.set_script_timeout(35)
+        self.headers = dict(HEADERS)
 
+    def __enter__(self):
+        return self
 
-def page_is_ready(driver, product_type, page_num):
-    # Check URLs rather than image downloads; lazy images need not finish loading.
-    return driver.execute_script(r"""
-        const root = document.querySelector('#plpBody');
-        const script = document.getElementById('__NEXT_DATA__');
-        if (!root || !script) return false;
-        try {
-            const data = JSON.parse(script.textContent);
-            const info = data.props.initialProps.pageProps.initialAlgoliaState.results;
-            if (data.query.countryCode !== 'cn' ||
-                data.query.route.join('/') !== arguments[0] ||
-                info.page !== arguments[1]) return false;
-            const cards = Array.from(document.querySelectorAll(arguments[2]));
-            if (cards.length !== info.hits.length) return false;
-            if (!cards.length) return info.nbHits === 0;
-            if (info.hits.some(hit => typeof hit.sale_percentage !== 'string')) return false;
-            const targetCount = info.hits.filter(hit => ['60%', '65%', '70%'].includes(hit.sale_percentage)).length;
-            const targetCards = cards.filter(card => /(?:70|65|60)% off/.test(card.textContent));
-            if (targetCards.length !== targetCount) return false;
-            return cards.every(card => {
-                const name = card.querySelector('[data-test-id="ProductCard__PlpName"]');
-                if (!name || !name.textContent.trim() || !card.textContent.includes('CN¥')) return false;
-                if (!/(?:70|65|60)% off/.test(card.textContent)) return true;
-                const fullPrice = card.querySelector('[data-test-id="ProductCard__ProductFullPrice"]');
-                const finalPrice = card.querySelector('[data-test-id="ProductCard__ProductFinalPrice"]');
-                if (!fullPrice || !finalPrice || !fullPrice.textContent.includes('CN¥') ||
-                    !finalPrice.textContent.includes('CN¥')) return false;
-                const img = card.querySelector('img');
-                if (!img) return false;
-                const sources = [img.getAttribute('src'), img.getAttribute('data-src'),
-                    (img.getAttribute('srcset') || '').trim().split(/\s+/)[0]];
-                return sources.some(src => /^https?:\/\//.test(src || ''));
-            });
-        } catch (_) {
-            return false;
-        }
-    """, BASE_URLS[product_type].split('/cn/', 1)[1], page_num - 1, PRODUCT_CARD_SELECTOR)
+    def __exit__(self, *_):
+        self.driver.quit()
 
-
-def get_page_data(page_num, driver, product_type='men'):
-    """Load and validate once, returning reusable cards and pagination metadata."""
-    url = f"{BASE_URLS[product_type]}?page={page_num}"
-    for attempt in range(1, PAGE_ATTEMPTS + 1):
-        started = time.perf_counter()
-        try:
-            driver.get(url)
-            loaded = time.perf_counter()
-            WebDriverWait(driver, 15, poll_frequency=0.25).until(
-                lambda current: page_is_ready(current, product_type, page_num)
+    def request(self, method, url, timeout=30, params=None, headers=None, **kwargs):
+        if '/collections/' in urlsplit(url).path:
+            self.driver.get(url)
+            WebDriverWait(self.driver, timeout).until(
+                lambda driver: driver.execute_script('return !!window.algoliaShopify?.config?.app_id')
             )
-            ready = time.perf_counter()
-            soup = BeautifulSoup(driver.page_source, 'lxml')
-            cards = soup.select(PRODUCT_CARD_SELECTOR)
-            info = get_page_info(soup, product_type, page_num, cards)
-            print(f"[{product_type}] page {page_num}: load={loaded - started:.2f}s "
-                  f"wait={ready - loaded:.2f}s parse={time.perf_counter() - ready:.2f}s", flush=True)
-            return cards, info
-        except Exception as e:
-            print(f"[{product_type}] page {page_num} attempt {attempt}/{PAGE_ATTEMPTS} failed: "
-                  f"{type(e).__name__}: {e}", flush=True)
+            # The first visit can redirect by IP; re-open the explicit country
+            # URL after initialization, then let get_storefront_config validate it.
+            if self.driver.execute_script('return window.Shopify?.country') != 'CN':
+                self.driver.get(url)
+                WebDriverWait(self.driver, timeout).until(
+                    lambda driver: driver.execute_script('return !!window.algoliaShopify?.config?.app_id')
+                )
+            result = {'status': 200, 'url': self.driver.current_url, 'body': self.driver.page_source, 'headers': {}}
+        else:
+            if params:
+                url += '?' + urlencode(params)
+            options = {'method': method, 'headers': dict(self.headers, **(headers or {}))}
+            if 'json' in kwargs:
+                options['headers']['Content-Type'] = 'application/json'
+                options['body'] = json.dumps(kwargs['json'])
+            result = self.driver.execute_async_script('''
+                const [url, options, timeout, done] = arguments;
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), timeout);
+                fetch(url, {...options, signal: controller.signal})
+                    .then(async response => done({status: response.status, url: response.url,
+                        body: await response.text(), headers: Object.fromEntries(response.headers)}))
+                    .catch(error => done({error: error.name}))
+                    .finally(() => clearTimeout(timer));
+            ''', url, options, timeout * 1000)
+            if 'error' in result:
+                raise requests.RequestException(f'Browser request failed: {result["error"]}')
+        response = requests.Response()
+        response.status_code = result['status']
+        response.url = result['url']
+        response._content = result['body'].encode('utf-8')
+        response.encoding = 'utf-8'
+        response.headers.update(result['headers'])
+        return response
+
+
+class StorefrontVerificationRequired(RuntimeError):
+    pass
+
+
+def request(session, method, url, **kwargs):
+    """Retry transient network failures without logging the public search key."""
+    global next_request_at
+    for attempt in range(1, PAGE_ATTEMPTS + 1):
+        with REQUEST_LOCK:
+            time.sleep(max(0, next_request_at - time.monotonic()))
+            next_request_at = time.monotonic() + REQUEST_INTERVAL
+        try:
+            response = session.request(method, url, timeout=30, **kwargs)
+            if response.status_code in (403, 429) and 'verifying your connection' in response.text.lower():
+                raise StorefrontVerificationRequired('Storefront requires browser connection verification')
+            if response.status_code == 429:
+                retry_after = response.headers.get('Retry-After', '30')
+                try:
+                    delay = float(retry_after) if retry_after.isdigit() else (
+                        parsedate_to_datetime(retry_after) - datetime.now(timezone.utc)).total_seconds()
+                except (TypeError, ValueError, OverflowError):
+                    delay = 30
+                delay = max(30, delay)
+                with REQUEST_LOCK:
+                    next_request_at = max(next_request_at, time.monotonic() + delay)
+                if attempt < PAGE_ATTEMPTS:
+                    print(f'Rate limited; all workers waiting at least {delay:.0f}s.', flush=True)
+                    continue
+            response.raise_for_status()
+            return response
+        except requests.RequestException:
             if attempt == PAGE_ATTEMPTS:
-                raise RuntimeError(f'[{product_type}] Page {page_num} failed after retries') from e
+                raise
             time.sleep(PAGE_INTERVAL)
 
 
-def extract_products(cards, product_type='men'):
-    """提取所有 70% 和 60% 65% off 的产品信息"""
-    products = []
-    discount_spans = [text for card in cards
-                      for text in card.find_all(string=re.compile(r'70% off|60% off|65% off'))]
-    
-    if not discount_spans:
-        return []
+def read_json_assignment(html, pattern):
+    match = re.search(pattern, html)
+    if not match:
+        raise ValueError('Missing storefront configuration')
+    return json.JSONDecoder().raw_decode(html[match.end():].lstrip())[0]
 
-    for text_node in discount_spans:
-        parent = text_node.parent
-        while parent and parent.name != 'a':
-            parent = parent.parent
-        
-        if parent and parent.name == 'a':
-            link = parent
-            href = link.get('href')
-            
-            full_url = f"https://www.endclothing.com{href}" if href.startswith('/') else href
-            full_url = normalize_product_url(full_url)
-            content = link.get_text(strip=True)
-            
-            # Choose a real URL; placeholders may coexist with lazy-load URLs.
-            img_tag = link.find('img')
-            img_url = ""
-            if img_tag:
-                srcset_parts = (img_tag.get('srcset') or '').strip().split()
-                sources = [img_tag.get('src'), img_tag.get('data-src'),
-                           srcset_parts[0].rstrip(',') if srcset_parts else None]
-                img_url = next((src for src in sources if src and src.startswith(('http://', 'https://'))), '')
-            
-            match = re.search(r'(.*)(CN¥[\d,]+)(CN¥[\d,]+)((?:70%|65%|60%) off)$', content)
-            if match:
-                name = match.group(1).strip()
-                original_price_str = match.group(2)
-                sale_price_str = match.group(3)
-                discount_str = match.group(4)
-                
-                original_price = int(re.sub(r'[^\d]', '', original_price_str))
-                discounted_price = int(re.sub(r'[^\d]', '', sale_price_str))
-                
-                products.append({
-                    "type": product_type,
-                    "name": name,
-                    "original_price": original_price,
-                    "discounted_price": discounted_price,
-                    "discount": discount_str,
-                    "url": full_url,
-                    "image_url": img_url
-                })
-            else:
-                # Fallback for cases where the regex doesn't match
-                name_match = re.search(r'(.*)(CN¥)', content)
-                name = name_match.group(1).strip() if name_match else content
-                # Try to find which discount it is from the text node
-                discount_val = "70% off"
-                if "65% off" in text_node: discount_val = "65% off"
-                elif "60% off" in text_node: discount_val = "60% off"
-                
-                products.append({
-                    "type": product_type,
-                    "name": name,
-                    "raw_content": content,
-                    "url": full_url,
-                    "discount": discount_val,
-                    "image_url": img_url
-                })
+
+def get_storefront_config(session, product_type):
+    response = request(session, 'GET', BASE_URLS[product_type])
+    if urlsplit(response.url).path != urlsplit(BASE_URLS[product_type]).path:
+        raise ValueError(f'[{product_type}] Unexpected storefront redirect: {urlsplit(response.url).path}')
+    html = response.text
+    config = read_json_assignment(html, r'window\.algoliaShopify\.config\s*=\s*(?=\{)')
+    country = read_json_assignment(html, r'Shopify\.country\s*=')
+    currency = read_json_assignment(html, r'Shopify\.currency\s*=')['active']
+    locale = read_json_assignment(html, r'Shopify\.locale\s*=')
+    market = re.search(r'algoliaShopify\.shopify\.market\s*=.*?"id"\s*:\s*(\d+)', html, re.S)
+    collection = re.search(r'algoliaShopify\.shopify\.collection_id\s*=\s*(\d+)', html)
+    if country != 'CN' or locale != 'en' or currency not in ('USD', 'CNY') or not market or not collection:
+        raise ValueError('Unexpected country, currency or collection configuration')
+    mapping = next((item for item in config['markets_mapping']
+                    if str(item['id']) == market.group(1) and item['locale'] == locale
+                    and country in item['all_regions']), None)
+    if not mapping or mapping['base_currency'] != currency or not config['markets_indexing_enabled']:
+        raise ValueError('Cannot determine China market index')
+    suffix = '_' + mapping['suffix'] if mapping['suffix'] else ''
+    return {
+        'app_id': config['app_id'],
+        'search_api_key': config['search_api_key'],
+        'index': config['index_prefix'] + 'products' + suffix,
+        'collection_id': collection.group(1),
+        'collection': urlsplit(response.url).path.rsplit('/', 1)[1],
+        'currency': currency,
+    }
+
+
+def get_page_info(info, page_num, config):
+    """Reject truncated pagination and duplicate variants before processing cards."""
+    for key in ('nbHits', 'nbPages', 'page', 'hitsPerPage'):
+        if type(info.get(key)) is not int or info[key] < 0:
+            raise ValueError(f'Invalid pagination field: {key}')
+    if info['page'] != page_num - 1 or info['hitsPerPage'] != HITS_PER_PAGE:
+        raise ValueError('Unexpected page number or page size')
+    total_pages = math.ceil(info['nbHits'] / info['hitsPerPage'])
+    if info['nbPages'] != total_pages:
+        raise ValueError('Search pagination is capped or inconsistent')
+    if (total_pages and page_num > total_pages) or (not total_pages and page_num != 1):
+        raise ValueError('Page outside the result set')
+    expected_count = min(info['hitsPerPage'], max(0, info['nbHits'] - info['page'] * info['hitsPerPage']))
+    hits = info['hits']
+    if len(hits) != expected_count:
+        raise ValueError('Incomplete search result list')
+    handles = []
+    for hit in hits:
+        handle = hit.get('handle')
+        if not isinstance(handle, str) or not re.fullmatch(r'[a-z0-9-]+', handle):
+            raise ValueError('Missing or invalid product handle')
+        if int(config['collection_id']) not in hit.get('collection_ids', []) or not hit.get('inventory_available'):
+            raise ValueError('Unexpected collection or unavailable product')
+        handles.append(handle)
+    if len(set(handles)) != len(handles):
+        raise ValueError('Duplicate products in search results')
+    return info
+
+
+def get_page_data(page_num, session, config):
+    params = urlencode({
+        'hitsPerPage': HITS_PER_PAGE,
+        'page': page_num - 1,
+        'distinct': 'true',
+        'filters': f'collection_ids:"{config["collection_id"]}" AND inventory_available:true',
+        'ruleContexts': json.dumps([config['collection'], 'shopify_default_collection']),
+    })
+    response = request(session, 'POST',
+                       f'https://{config["app_id"].lower()}-3.algolianet.com/1/indexes/*/queries',
+                       headers={'X-Algolia-Application-Id': config['app_id'],
+                                'X-Algolia-API-Key': config['search_api_key']},
+                       json={'requests': [{'indexName': config['index'], 'params': params}]})
+    return get_page_info(response.json()['results'][0], page_num, config)
+
+
+def get_product_cards(session, handles):
+    response = request(session, 'GET', 'https://www.endclothing.com/en-cn/search',
+                       params={'q': ' '.join(handles), 'section_id': 'product-card-batch'})
+    if urlsplit(response.url).path != '/en-cn/search':
+        raise ValueError('Unexpected product card region redirect')
+    soup = BeautifulSoup(response.text, 'lxml')
+    cards = soup.select(PRODUCT_CARD_SELECTOR)
+    actual = [card.get('data-product-card-handle') for card in cards]
+    if len(actual) != len(handles) or set(actual) != set(handles):
+        raise ValueError('Incomplete product card batch')
+    if any(not card.select_one('article.prd-Card') for card in cards):
+        raise ValueError('Product card markup missing')
+    return cards
+
+
+def extract_price(card, selector, currency):
+    node = card.select_one(selector)
+    symbol = {'USD': '$', 'CNY': 'CN¥'}[currency]
+    match = re.search(re.escape(symbol) + r'\s*([0-9,]+(?:\.[0-9]{1,2})?)(?![0-9.])',
+                      node.get_text(' ', strip=True) if node else '')
+    if not match:
+        raise ValueError(f'Missing {currency} price: {selector}')
+    value = float(match.group(1).replace(',', ''))
+    return int(value) if value.is_integer() else value
+
+
+def extract_products(cards, product_type='men', currency='USD'):
+    """Use the storefront's discount labels, not rounded price-ratio guesses."""
+    products = []
+    for card in cards:
+        label = card.select_one('.prd-Price_Discount')
+        discount = label.get_text(' ', strip=True) if label else ''
+        if not discount and card.select_one('.prd-Price_SalePrice'):
+            raise ValueError('Missing sale discount label')
+        if discount not in TARGET_DISCOUNTS:
+            continue
+        title = card.select_one('.prd-Card_Title')
+        byline = card.select_one('.prd-Card_Byline')
+        link = card.select_one('a.prd-Card_Image')
+        image = link.select_one('img') if link else None
+        name = title.get_text(' ', strip=True) if title else ''
+        if not name:
+            raise ValueError('Missing target product title')
+        if byline and byline.get_text(strip=True):
+            name += ' - ' + byline.get_text(' ', strip=True)
+        path = '/en-cn/products/' + card['data-product-card-handle']
+        if not name or not link or link.get('href') != path or not image or not image.get('src'):
+            raise ValueError('Incomplete target product name, link or image')
+        image_url = urljoin('https://www.endclothing.com', image['src'])
+        if urlsplit(image_url).scheme != 'https' or not urlsplit(image_url).netloc:
+            raise ValueError('Invalid product image URL')
+        original_price = extract_price(card, '.prd-Price_RegularPrice', currency)
+        discounted_price = extract_price(card, '.prd-Price_SalePrice', currency)
+        if not 0 < discounted_price < original_price:
+            raise ValueError('Invalid sale prices')
+        products.append({
+            'type': product_type,
+            'name': name,
+            'original_price': original_price,
+            'discounted_price': discounted_price,
+            'currency': currency,
+            'discount': discount,
+            'url': 'https://www.endclothing.com' + path,
+            'image_url': image_url,
+        })
     return products
 
+
 def scrape_type(product_type, driver_path):
-    """Return valid products and skipped pages without aborting on a page failure."""
+    """Retrieve the same search results and card sections used by the new site."""
     started = time.perf_counter()
-    driver = None
     products_dict = {}
     skipped_pages = []
-    try:
-        driver = webdriver.Chrome(service=Service(driver_path), options=create_chrome_options())
-        driver.set_page_load_timeout(30)
-        # Page 2 can supply pagination if page 1 fails after its retries.
-        for first_page in (1, 2):
+    with BrowserSession(driver_path) as session:
+        session.headers.update(HEADERS)
+        config = get_storefront_config(session, product_type)
+        first_info = get_page_data(1, session, config)
+        total_pages = first_info['nbPages']
+        seen_handles = set()
+        print(f'[{product_type}] products={first_info["nbHits"]} pages={total_pages} '
+              f'currency={config["currency"]}', flush=True)
+        for page in range(1, total_pages + 1):
             try:
-                if first_page > 1:
+                if page > 1:
                     time.sleep(PAGE_INTERVAL)
-                cards, info = get_page_data(first_page, driver, product_type)
-                break
+                info = first_info if page == 1 else get_page_data(page, session, config)
+                if (info['nbHits'], info['nbPages']) != (first_info['nbHits'], total_pages):
+                    raise ValueError('Catalog changed during pagination; retry a fresh run')
+                handles = [hit['handle'] for hit in info['hits']]
+                if seen_handles.intersection(handles):
+                    raise ValueError('Repeated products across pages')
+                page_products = []
+                for offset in range(0, len(handles), CARD_BATCH_SIZE):
+                    batch = handles[offset:offset + CARD_BATCH_SIZE]
+                    cards = get_product_cards(session, batch)
+                    page_products.extend(extract_products(cards, product_type, config['currency']))
+                    if offset % (CARD_BATCH_SIZE * 10) == 0:
+                        print(f'[{product_type}] page {page}/{total_pages}: '
+                              f'cards={min(offset + CARD_BATCH_SIZE, len(handles))}/{len(handles)}', flush=True)
+                seen_handles.update(handles)
+                products_dict.update({(product_type, product['url']): product for product in page_products})
+                print(f'[{product_type}] page {page}/{total_pages}: matched={len(page_products)} '
+                      f'collected={len(products_dict)}', flush=True)
             except Exception as e:
-                skipped_pages.append(first_page)
-                print(f"[{product_type}] SKIP page {first_page}: {type(e).__name__}: {e}", flush=True)
-        else:
-            print(f"[{product_type}] Cannot determine total pages; retaining existing products.", flush=True)
-            return products_dict, skipped_pages
-        total_pages = info['nbPages']
-        print(f"[{product_type}] products={info['nbHits']} page_size={info['hitsPerPage']} "
-              f"pages={total_pages}", flush=True)
-        for page in range(first_page, total_pages + 1):
-            try:
-                if page > first_page:
-                    time.sleep(PAGE_INTERVAL)
-                    cards, info = get_page_data(page, driver, product_type)
-                products = extract_products(cards, product_type)
-                expected_targets = sum(hit['sale_percentage'] in ('60%', '65%', '70%') for hit in info['hits'])
-                if len(products) != expected_targets:
-                    raise ValueError(f'[{product_type}] Incomplete discount extraction on page {page}')
-                if any('original_price' not in p or 'discounted_price' not in p or not p.get('image_url')
-                       for p in products):
-                    raise ValueError(f'[{product_type}] Incomplete product data on page {page}')
-                products_dict.update({(product_type, product['url']): product for product in products})
-            except Exception as e:
+                if isinstance(e, StorefrontVerificationRequired):
+                    raise
+                if isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code == 429:
+                    raise RuntimeError(f'[{product_type}] Rate limit persists; stopping this type') from e
                 skipped_pages.append(page)
-                print(f"[{product_type}] SKIP page {page}/{total_pages}: {type(e).__name__}: {e}", flush=True)
-                continue
-            print(f"[{product_type}] page {page}/{total_pages}: matched={len(products)} "
-                  f"collected={len(products_dict)}", flush=True)
-        status = 'partial' if skipped_pages else 'complete'
-        print(f"[{product_type}] {status}: products={len(products_dict)} skipped_pages={skipped_pages} "
-              f"elapsed={time.perf_counter() - started:.2f}s", flush=True)
-        return products_dict, skipped_pages
-    finally:
-        if driver is not None:
-            driver.quit()
+                print(f'[{product_type}] SKIP page {page}: {type(e).__name__}: {e}', flush=True)
+        print(f'[{product_type}] products={len(products_dict)} skipped_pages={skipped_pages} '
+              f'elapsed={time.perf_counter() - started:.2f}s', flush=True)
+    return products_dict, skipped_pages
 
 
 def main():
@@ -320,7 +378,6 @@ def main():
             for product_type in BASE_URLS
         }
         print(f"Loaded {initial_count} existing products.", flush=True)
-        # Install once before starting workers to avoid concurrent cache writes.
         driver_path = ChromeDriverManager().install()
         results = {}
         failed_types = []
@@ -336,6 +393,10 @@ def main():
                         skipped_by_type[product_type] = skipped_pages
                         # Without page ownership, retain this type's old products to avoid false removals.
                         retained = {key: item for key, item in existing.items() if key[0] == product_type}
+                        if not retained or any(item.get('currency') != 'USD' or
+                                               not item['url'].startswith('https://www.endclothing.com/en-cn/products/')
+                                               for item in retained.values()):
+                            raise ValueError('Cannot merge an incomplete new-site scrape with legacy data')
                         retained.update(products)
                         products = retained
                         print(f"[{product_type}] WARNING: skipped pages {skipped_pages}; "
