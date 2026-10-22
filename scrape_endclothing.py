@@ -12,6 +12,7 @@ from email.utils import parsedate_to_datetime
 from threading import Lock
 from urllib.parse import unquote, urlencode, urljoin, urlsplit, urlunsplit
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
@@ -95,17 +96,26 @@ class BrowserSession:
 
     def request(self, method, url, timeout=30, params=None, headers=None, **kwargs):
         if '/collections/' in urlsplit(url).path:
-            self.driver.get(url)
-            WebDriverWait(self.driver, timeout).until(
-                lambda driver: driver.execute_script('return !!window.algoliaShopify?.config?.app_id')
-            )
-            # The first visit can redirect by IP; re-open the explicit country
-            # URL after initialization, then let get_storefront_config validate it.
-            if self.driver.execute_script('return window.Shopify?.country') != 'CN':
+            try:
                 self.driver.get(url)
                 WebDriverWait(self.driver, timeout).until(
                     lambda driver: driver.execute_script('return !!window.algoliaShopify?.config?.app_id')
                 )
+                # The first visit can redirect by IP; re-open the explicit country
+                # URL after initialization, then let get_storefront_config validate it.
+                if self.driver.execute_script('return window.Shopify?.country') != 'CN':
+                    self.driver.get(url)
+                    WebDriverWait(self.driver, timeout).until(
+                        lambda driver: driver.execute_script('return !!window.algoliaShopify?.config?.app_id')
+                    )
+            except TimeoutException as error:
+                path = urlsplit(self.driver.current_url).path
+                title = self.driver.title[:160]
+                country = self.driver.execute_script('return window.Shopify?.country || "unknown"')
+                detail = f'path={path} title={title!r} country={country}'
+                if 'verifying your connection' in title.lower() or 'just a moment' in title.lower():
+                    raise StorefrontVerificationRequired(f'Browser verification required: {detail}') from error
+                raise requests.Timeout(f'Storefront initialization timed out: {detail}') from error
             result = {'status': 200, 'url': self.driver.current_url, 'body': self.driver.page_source, 'headers': {}}
         else:
             if params:
@@ -165,9 +175,11 @@ def request(session, method, url, **kwargs):
                     continue
             response.raise_for_status()
             return response
-        except requests.RequestException:
+        except requests.RequestException as error:
             if attempt == PAGE_ATTEMPTS:
                 raise
+            print(f'Request attempt {attempt}/{PAGE_ATTEMPTS} failed: '
+                  f'{type(error).__name__}: {error}; retrying.', flush=True)
             time.sleep(PAGE_INTERVAL)
 
 

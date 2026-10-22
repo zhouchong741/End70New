@@ -132,6 +132,16 @@ class ScraperTests(unittest.TestCase):
             scraper.request(session, 'GET', 'https://example.test')
         self.assertEqual(session.request.call_count, 1)
 
+    def test_browser_initialization_timeout_is_retryable_with_context(self):
+        driver = Mock(current_url=scraper.BASE_URLS['women'], title="Women's Sale – END.")
+        driver.get.side_effect = scraper.TimeoutException()
+        driver.execute_script.return_value = 'CN'
+        with patch.object(scraper.webdriver, 'Chrome', return_value=driver):
+            with scraper.BrowserSession('/test/chromedriver') as session:
+                with self.assertRaisesRegex(scraper.requests.Timeout, 'womens-sale.*country=CN'):
+                    session.request('GET', scraper.BASE_URLS['women'])
+        driver.quit.assert_called_once()
+
     def test_rate_limit_honors_seconds_and_http_date(self):
         for header in ('90', format_datetime(datetime.now(timezone.utc) + timedelta(seconds=90))):
             with self.subTest(header=header):
