@@ -1590,6 +1590,26 @@
     "image_url": "https://www.endclothing.com/cdn/shop/files/13830e8b867435c8a5f8a2ac79a9944095eed918.jpg?v=1788587994&width=2100"
   },
   {
+    "type": "men",
+    "name": "Le Specs Pilferer Sunglasses - Toffee Tort",
+    "original_price": 79,
+    "discounted_price": 24,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/le-specs-pilferer-sunglasses-lsp2352103",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/844fb4809b1ec310076d7fedf8440b3f62e1f747.jpg?v=1788610784&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "END. x Earl Of East 'Laundromat' Candle - White & Pink",
+    "original_price": 79,
+    "discounted_price": 32,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/end-x-earl-of-east-laundromat-candle-end-lndrmt-wht",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/c2faac7b878bf771b0752d44ec343357ee87eeff.jpg?v=1790201750&width=2100"
+  },
+  {
     "type": "women",
     "name": "adidas Striped Terry T-Shirt - Multicolor & Crystal Sky",
     "original_price": 49,
@@ -2958,5 +2978,35 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/en-cn/products/adidas-buffy-crew-jx1276",
     "image_url": "https://www.endclothing.com/cdn/shop/files/8a4115193c3841229629f025d4cdaa5da2408560.jpg?v=1788587944&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Le Specs Pilferer Sunglasses - Toffee Tort",
+    "original_price": 79,
+    "discounted_price": 24,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/le-specs-pilferer-sunglasses-lsp2352103",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/844fb4809b1ec310076d7fedf8440b3f62e1f747.jpg?v=1788610784&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "SKIMS Cotton Fleece Pullover Hoodie - Onyx",
+    "original_price": 105,
+    "discounted_price": 42,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/skims-cotton-fleece-pullover-hoodie-tp-plo-4475-onx",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/22682685e0b61cd75b4a2d1ede2d4644279a778c.jpg?v=1788610776&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "END. x Earl Of East 'Laundromat' Candle - White & Pink",
+    "original_price": 79,
+    "discounted_price": 32,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/end-x-earl-of-east-laundromat-candle-end-lndrmt-wht",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/c2faac7b878bf771b0752d44ec343357ee87eeff.jpg?v=1790201750&width=2100"
   }
 ]
