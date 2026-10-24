@@ -161,6 +161,16 @@
   },
   {
     "type": "men",
+    "name": "Cole Buxton Repaired Jeans - Blue",
+    "original_price": 325,
+    "discounted_price": 130,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/cole-buxton-repaired-jeans-ss25rj190-400",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/ca134dba9dbd32645be7abeec4ab799328cbd4af.jpg?v=1788611001&width=2100"
+  },
+  {
+    "type": "men",
     "name": "Fear of God ESSENTIALS Active Trace Relaxed Drawstring Pants - Vintage Black",
     "original_price": 250,
     "discounted_price": 100,
@@ -328,16 +338,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/en-cn/products/pleasures-quench-t-shirt-p25su043-wht",
     "image_url": "https://www.endclothing.com/cdn/shop/files/e4e3ea519d783485e806c5fdb91baf2ac58b0d79.jpg?v=1788611321&width=2100"
-  },
-  {
-    "type": "men",
-    "name": "Cole Buxton Repaired Jeans - Blue",
-    "original_price": 325,
-    "discounted_price": 130,
-    "currency": "USD",
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/en-cn/products/cole-buxton-repaired-jeans-ss25rj190-400",
-    "image_url": "https://www.endclothing.com/cdn/shop/files/ca134dba9dbd32645be7abeec4ab799328cbd4af.jpg?v=1788611001&width=2100"
   },
   {
     "type": "men",
