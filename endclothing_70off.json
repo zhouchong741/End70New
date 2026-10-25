@@ -161,6 +161,16 @@
   },
   {
     "type": "men",
+    "name": "MKI Uniform Sweat Shorts - Pigment Cement",
+    "original_price": 95,
+    "discounted_price": 29,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/mki-uniform-sweat-shorts-mki-unishrts-neutl",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/bb2d17f08a563381fedba735591f12a868d965f1.jpg?v=1788611432&width=2100"
+  },
+  {
+    "type": "men",
     "name": "Cole Buxton Repaired Jeans - Blue",
     "original_price": 325,
     "discounted_price": 130,
@@ -238,16 +248,6 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/en-cn/products/tgb-birds-of-bwindi-hoodie-10185-blk",
     "image_url": "https://www.endclothing.com/cdn/shop/files/586a45e872136a1d7b66112fc3fd905e11384c2f.jpg?v=1788520612&width=2100"
-  },
-  {
-    "type": "men",
-    "name": "MKI Uniform Sweat Shorts - Pigment Cement",
-    "original_price": 95,
-    "discounted_price": 29,
-    "currency": "USD",
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/en-cn/products/mki-uniform-sweat-shorts-mki-unishrts-neutl",
-    "image_url": "https://www.endclothing.com/cdn/shop/files/bb2d17f08a563381fedba735591f12a868d965f1.jpg?v=1788611432&width=2100"
   },
   {
     "type": "men",
@@ -1328,16 +1328,6 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/en-cn/products/junya-watanabe-man-x-oakley-sneaker-wp-k191-100-1",
     "image_url": "https://www.endclothing.com/cdn/shop/files/c3e8ce74dd4ec3b2a0852b98b63598872c1a77a5.jpg?v=1788587828&width=2100"
-  },
-  {
-    "type": "women",
-    "name": "Adidas Crochet T-Shirt - Off White",
-    "original_price": 49,
-    "discounted_price": 15,
-    "currency": "USD",
-    "discount": "70% off",
-    "url": "https://www.endclothing.com/en-cn/products/adidas-crochet-t-shirt-ke0200",
-    "image_url": "https://www.endclothing.com/cdn/shop/files/120bd1425238776e83d561217b055a601f16d647.jpg?v=1788611037&width=2100"
   },
   {
     "type": "women",
