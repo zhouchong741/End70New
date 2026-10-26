@@ -1320,6 +1320,66 @@
     "image_url": "https://www.endclothing.com/cdn/shop/files/c3e8ce74dd4ec3b2a0852b98b63598872c1a77a5.jpg?v=1788587828&width=2100"
   },
   {
+    "type": "men",
+    "name": "New Balance Abzorb 1890 Sneaker - Dark Silver Metallic & Granite",
+    "original_price": 209,
+    "discounted_price": 63,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-abzorb-1890-sneaker-u18907ng",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0d73797ce7405ba561c3a0b8327dd02500db7d36.jpg?v=1788611048&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Gramicci Core Pant - Greige",
+    "original_price": 130,
+    "discounted_price": 39,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/gramicci-core-pant-g102-ogt-grg",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/13830e8b867435c8a5f8a2ac79a9944095eed918.jpg?v=1788587994&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Café Mountain Down Cleaning Duck T-Shirt - Natural",
+    "original_price": 89,
+    "discounted_price": 36,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/cafe-mountain-down-cleaning-duck-t-shirt-cm-ccledktee-nat",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/5c2b8d5f18bbe3af0b9d9f8359f6468595a8b532.jpg?v=1788610788&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "New Balance 204L Sneaker - Mushroom",
+    "original_price": 159,
+    "discounted_price": 64,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-204l-sneaker-u204lmma",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/f97ce4fc59673a052e98ca0b13356808bc0d20ad.jpg?v=1788611311&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Fear of God ESSENTIALS Signature 90s Polo Sweatshirt - Concrete Heather",
+    "original_price": 190,
+    "discounted_price": 76,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/fear-of-god-essentials-signature-90s-polo-sweatshirt-192sp264373f",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/57ac1d3fe038c92bc1209965dac64b91fd913df1.jpg?v=1788520594&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Le Specs Pilferer Sunglasses - Toffee Tort",
+    "original_price": 79,
+    "discounted_price": 24,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/le-specs-pilferer-sunglasses-lsp2352103",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/844fb4809b1ec310076d7fedf8440b3f62e1f747.jpg?v=1788610784&width=2100"
+  },
+  {
     "type": "women",
     "name": "Champion for E by END. Crew Sweatshirt 'Emerald' - Black",
     "original_price": 125,
@@ -2448,5 +2508,35 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/en-cn/products/adidas-mufc-a-91-jersey-jf0376",
     "image_url": "https://www.endclothing.com/cdn/shop/files/dbaeb380fec0d4cda89a1ae365f744edd4a9c23d.jpg?v=1788587864&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "New Balance Abzorb 1890 Sneaker - Dark Silver Metallic & Granite",
+    "original_price": 209,
+    "discounted_price": 63,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-abzorb-1890-sneaker-u18907ng",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0d73797ce7405ba561c3a0b8327dd02500db7d36.jpg?v=1788611048&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Fruity Booty Cotton Jersey Brief - Pink",
+    "original_price": 55,
+    "discounted_price": 17,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/fruity-booty-cotton-jersey-brief-fb-aw25-cot-pnk-brf",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/1add23c16acdd51c09a152e8d1df11a8b93d1b0a.jpg?v=1789888524&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Le Specs Pilferer Sunglasses - Toffee Tort",
+    "original_price": 79,
+    "discounted_price": 24,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/le-specs-pilferer-sunglasses-lsp2352103",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/844fb4809b1ec310076d7fedf8440b3f62e1f747.jpg?v=1788610784&width=2100"
   }
 ]
