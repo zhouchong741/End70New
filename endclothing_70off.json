@@ -1370,6 +1370,26 @@
     "image_url": "https://www.endclothing.com/cdn/shop/files/c3e8ce74dd4ec3b2a0852b98b63598872c1a77a5.jpg?v=1788587828&width=2100"
   },
   {
+    "type": "men",
+    "name": "New Balance Abzorb 1890 Sneaker - Dark Silver Metallic & Granite",
+    "original_price": 209,
+    "discounted_price": 63,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-abzorb-1890-sneaker-u18907ng",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0d73797ce7405ba561c3a0b8327dd02500db7d36.jpg?v=1788611048&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Gramicci Core Pant - Greige",
+    "original_price": 130,
+    "discounted_price": 39,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/gramicci-core-pant-g102-ogt-grg",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/13830e8b867435c8a5f8a2ac79a9944095eed918.jpg?v=1788587994&width=2100"
+  },
+  {
     "type": "women",
     "name": "adidas Taekwondo Mei Ballet Cow Sneakers - Aurora Coffee, Ftwr White & Gum 2",
     "original_price": 105,
@@ -2528,5 +2548,25 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/en-cn/products/jil-sander-crew-knit-j04gp0003-j14532-001",
     "image_url": "https://www.endclothing.com/cdn/shop/files/c6e0148fe18c04cb7894b0a98dc462de77009152.jpg?v=1788610859&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Needles x Kae Tanaka Track Pant - Black",
+    "original_price": 245,
+    "discounted_price": 74,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/needles-x-kae-tanaka-track-pant-qv425-b",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/7f42522cb1a769a8aae3d5874a1844939c203e06.jpg?v=1788611202&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "New Balance Abzorb 1890 Sneaker - Dark Silver Metallic & Granite",
+    "original_price": 209,
+    "discounted_price": 63,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-abzorb-1890-sneaker-u18907ng",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0d73797ce7405ba561c3a0b8327dd02500db7d36.jpg?v=1788611048&width=2100"
   }
 ]
