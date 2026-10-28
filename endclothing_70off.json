@@ -1400,6 +1400,26 @@
     "image_url": "https://www.endclothing.com/cdn/shop/files/dd453aaa11071aaca518dc2d32c0c5cea3d2260f.jpg?v=1788610960&width=2100"
   },
   {
+    "type": "men",
+    "name": "MKI Uniform Sweat Shorts - Pigment Cement",
+    "original_price": 95,
+    "discounted_price": 29,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/mki-uniform-sweat-shorts-mki-unishrts-neutl",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/bb2d17f08a563381fedba735591f12a868d965f1.jpg?v=1788611432&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "about:blank Bottle T-Shirt - Oat",
+    "original_price": 105,
+    "discounted_price": 42,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/aboutblank-bottle-t-shirt-ss26-100-oat",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0546fbb1c874163b4b9c339ade0945fb9520626b.jpg?v=1788610844&width=2100"
+  },
+  {
     "type": "women",
     "name": "SKIMS Cotton Rib Boxer - Cranberry",
     "original_price": 49,
