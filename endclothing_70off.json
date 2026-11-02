@@ -1311,16 +1311,6 @@
   },
   {
     "type": "women",
-    "name": "Champion for E by END. Crew Sweatshirt 'Emerald' - Black",
-    "original_price": 125,
-    "discounted_price": 50,
-    "currency": "USD",
-    "discount": "60% off",
-    "url": "https://www.endclothing.com/en-cn/products/champion-for-e-by-end-crew-sweatshirt-emerald-221755-kk001",
-    "image_url": "https://www.endclothing.com/cdn/shop/files/0ee4380b285d197d794a4efbd0877b1848a41185.jpg?v=1788520398&width=2100"
-  },
-  {
-    "type": "women",
     "name": "SKIMS Cotton Rib Boxer - Cranberry",
     "original_price": 49,
     "discounted_price": 20,
@@ -2048,6 +2038,16 @@
     "discount": "60% off",
     "url": "https://www.endclothing.com/en-cn/products/our-legacy-peak-cargo-trousers-w4254pdw",
     "image_url": "https://www.endclothing.com/cdn/shop/files/71199ef169437f4fba4ecade9255a5b503b71a47.jpg?v=1788611080&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Champion for E by END. Crew Sweatshirt 'Emerald' - Black",
+    "original_price": 125,
+    "discounted_price": 50,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/champion-for-e-by-end-crew-sweatshirt-emerald-221755-kk001",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/0ee4380b285d197d794a4efbd0877b1848a41185.jpg?v=1788520398&width=2100"
   },
   {
     "type": "women",
