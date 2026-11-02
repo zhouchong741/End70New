@@ -1310,6 +1310,56 @@
     "image_url": "https://www.endclothing.com/cdn/shop/files/a1dc7a2cb7030cbbbf46f59624464504bd59ccfa.jpg?v=1793285657&width=2100"
   },
   {
+    "type": "men",
+    "name": "Carhartt WIP Landon Loose Denim Shorts - Black Stone Washed",
+    "original_price": 99,
+    "discounted_price": 40,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/carhartt-wip-landon-loose-denim-shorts-i030469-8906",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/95358868c25b5f26372b71c968eb214e8af178d7.jpg?v=1788610808&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Nike Daybreak Sp Sneaker - Field Purple & Viotech",
+    "original_price": 119,
+    "discounted_price": 48,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/nike-daybreak-sp-sneaker-bv7725-501",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/747878a3d931268f8791474bb7e6fd749f7e4cce.jpg?v=1788520586&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Cole Buxton Mini Logo Polo Shirt - Vintage White",
+    "original_price": 165,
+    "discounted_price": 66,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/cole-buxton-mini-logo-polo-shirt-aw25mlps344-101",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/ce4a0021a09f60ca7956a37e8b273cc7d2c9b813.jpg?v=1788587966&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "Converse Chuck 70 Sneaker - Moss Sauce, Egret & Black",
+    "original_price": 115,
+    "discounted_price": 40,
+    "currency": "USD",
+    "discount": "65% off",
+    "url": "https://www.endclothing.com/en-cn/products/converse-chuck-70-sneaker-a14644c",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/d4923ff94d85f82a04501a20e0f2660d9c86c367.jpg?v=1788520277&width=2100"
+  },
+  {
+    "type": "men",
+    "name": "about:blank Relaxed Denim Jean - Antique Black",
+    "original_price": 190,
+    "discounted_price": 57,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/aboutblank-relaxed-denim-jean-ss26-006-abk",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/7fdbc9298c7b353ed806a6b592c1594a0d80185d.jpg?v=1788611248&width=2100"
+  },
+  {
     "type": "women",
     "name": "SKIMS Cotton Rib Boxer - Cranberry",
     "original_price": 49,
