@@ -2528,5 +2528,45 @@
     "discount": "70% off",
     "url": "https://www.endclothing.com/en-cn/products/acne-studios-iranee-p-vintage-rose-skirt-af0528-bya",
     "image_url": "https://www.endclothing.com/cdn/shop/files/1523fb7bf6baa691f6945e47629069773c6cafd7.jpg?v=1788520608&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Kijun Shell Hair Clip - Sky Blue",
+    "original_price": 15,
+    "discounted_price": 6,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/kijun-shell-hair-clip-261wachrm02sb",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/914f9e781a779d397f65cf88a204d268209c3250.jpg?v=1788520463&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "SKIMS Seamless Sculpt Bralette - Sienna",
+    "original_price": 55,
+    "discounted_price": 22,
+    "currency": "USD",
+    "discount": "60% off",
+    "url": "https://www.endclothing.com/en-cn/products/skims-seamless-sculpt-bralette-br-scp-3355-sie",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/2a301c19345406d13a2b118029d8aeb013606c94.jpg?v=1788520661&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "Missoma Spiral Dome Statement Ring - Silver",
+    "original_price": 159,
+    "discounted_price": 56,
+    "currency": "USD",
+    "discount": "65% off",
+    "url": "https://www.endclothing.com/en-cn/products/missoma-spiral-dome-statement-ring-cs-s-r6-ns",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/37a85c53b77355896a829573bedc7bbfdff05467.jpg?v=1790201708&width=2100"
+  },
+  {
+    "type": "women",
+    "name": "New Balance 2010 Sneaker - Black",
+    "original_price": 199,
+    "discounted_price": 60,
+    "currency": "USD",
+    "discount": "70% off",
+    "url": "https://www.endclothing.com/en-cn/products/new-balance-2010-sneaker-u2010etb",
+    "image_url": "https://www.endclothing.com/cdn/shop/files/a3038d834f59126ddd1a6513b189c7a3ac75cbf6.jpg?v=1788611428&width=2100"
   }
 ]
